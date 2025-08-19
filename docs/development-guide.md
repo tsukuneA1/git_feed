@@ -8,13 +8,13 @@
 - **Ruby**: 3.3.7+
 - **Rails**: 8.0.2+
 - **PostgreSQL**: 14.0+
-- **Redis**: 7.0+ (キャッシュ・ジョブキュー用)
 
 #### Frontend Requirements  
-- **Node.js**: 18.0+
-- **npm**: 9.0+ または **yarn**: 1.22+
+- **Node.js**: 20.0+
+- **pnpm**: 9.0+ (パッケージマネージャー)
 
 #### Development Tools
+- **Go Task**: 3.x+ (タスクランナー) - [インストールガイド](https://taskfile.dev/installation/)
 - **Git**: バージョン管理
 - **VS Code**: 推奨エディター
 - **GitHub CLI**: GitHub操作の自動化
@@ -27,47 +27,44 @@ git clone https://github.com/your-username/hackathon_demo_app.git
 cd hackathon_demo_app
 ```
 
-#### 2. Backend セットアップ
+#### 2. Task Runner による一括セットアップ (推奨)
 ```bash
-cd backend
+# Taskファイル確認
+task --list
 
-# Ruby環境確認
-ruby -v  # 3.3.7以上であることを確認
-
-# 依存関係インストール
-bundle install
+# 依存関係インストール（フロントエンド + バックエンド）
+task install
 
 # データベース作成・マイグレーション
-rails db:create
-rails db:migrate
+task backend:db:create
+task backend:db:migrate
 
 # 環境変数設定
-cp .env.example .env
-# .envファイルを編集して必要な値を設定
+# ルート階層の .env ファイルを編集
+# BACKEND_PORT=3000, FRONTEND_PORT=3001 など
 
-# テスト実行（オプション）
-rails test
+# 開発サーバー起動（両方同時）
+task dev
 
-# サーバー起動
-rails server -p 3001
+# 個別起動も可能
+task backend:dev   # Rails server (port 3000)
+task frontend:dev  # Next.js dev server (port 3001)
 ```
 
-#### 3. Frontend セットアップ
+#### 3. 従来の手動セットアップ方法
 ```bash
+# Backend
+cd backend
+ruby -v  # 3.3.7以上であることを確認
+bundle install
+rails db:create db:migrate
+rails server -p 3000
+
+# Frontend (別ターミナル)
 cd frontend
-
-# Node.js環境確認
-node -v  # 18.0以上であることを確認
-
-# 依存関係インストール
-npm install
-
-# 環境変数設定
-cp .env.local.example .env.local
-# .env.localファイルを編集
-
-# 開発サーバー起動
-npm run dev
+node -v  # 20.0以上であることを確認
+pnpm install
+pnpm dev  # port 3001で起動
 ```
 
 #### 4. 必要な外部サービス設定
@@ -86,6 +83,100 @@ npm run dev
 2. API Keysセクションで新しいキーを作成
 3. `.env`ファイルに`OPENAI_API_KEY`として設定
 
+## Task Runner
+
+### 概要
+このプロジェクトでは**Go Task**をタスクランナーとして採用し、モノレポ構成での開発効率を向上させています。
+
+### 利用可能なタスク
+
+#### 🚀 開発用タスク
+```bash
+# セットアップ
+task install          # 全依存関係インストール
+task backend:install  # Rails gem インストール
+task frontend:install # pnpm パッケージインストール
+
+# 開発サーバー
+task dev              # フロントエンド・バックエンド同時起動
+task backend:dev      # Rails server (port 3000)
+task frontend:dev     # Next.js dev server (port 3001)
+
+# データベース
+task backend:db:create   # DB作成
+task backend:db:migrate  # マイグレーション実行
+task backend:db:seed     # シードデータ投入
+task backend:db:reset    # DB完全リセット
+```
+
+#### 🔍 品質管理タスク
+```bash
+# CI/CD チェック
+task ci:all           # 全品質チェック実行
+task ci:frontend      # Biome + ESLint + TypeScript
+task ci:backend       # RuboCop
+
+# コードフォーマット
+task format           # 全体フォーマット
+task frontend:format  # Biome + ESLint自動修正
+task backend:format   # RuboCop自動修正
+
+# リント
+task lint             # 全体リント実行
+task frontend:lint    # Biome + ESLint
+task backend:lint     # RuboCop
+```
+
+#### 🧹 クリーンアップタスク
+```bash
+task clean            # 全体クリーンアップ
+task frontend:clean   # .next, node_modules/.cache など
+task backend:clean    # tmp/cache, log/*.log など
+task kill-ports       # 開発ポート (3000, 3001) のプロセス終了
+```
+
+#### 🐳 Docker関連タスク
+```bash
+task docker:build     # Docker イメージビルド
+task docker:up        # コンテナ起動
+task docker:down      # コンテナ停止
+task docker:logs      # ログ表示
+```
+
+### Taskfile.yml 設定例
+```yaml
+# ルート階層のTaskfile.yml
+version: '3'
+
+vars:
+  BACKEND_DIR: ./backend
+  FRONTEND_DIR: ./frontend
+
+tasks:
+  dev:
+    desc: "開発サーバーを起動（backend + frontend）"
+    cmds:
+      - task kill-ports
+      - echo "🚀 Starting development servers..."
+      - task --parallel backend:dev frontend:dev
+
+  ci:all:
+    desc: "全体のCI/CDチェック"
+    deps: [ci:frontend, ci:backend]
+```
+
+### フロントエンド技術構成
+- **Package Manager**: pnpm
+- **Formatter**: Biome (高速フォーマット)
+- **Linter**: Biome + ESLint (併用)
+- **Type Checker**: TypeScript
+- **Port**: 3001
+
+### バックエンド技術構成
+- **Formatter**: RuboCop
+- **Linter**: RuboCop
+- **Port**: 3000
+
 ## 開発ワークフロー
 
 ### ブランチ戦略
@@ -100,7 +191,7 @@ main                    # 本番反映ブランチ
 ### 開発手順
 1. **Issue作成**: GitHub Issuesで作業内容を明確化
 2. **ブランチ作成**: `feature/issue-123-add-user-profile`
-3. **開発・テスト**: 機能実装とテスト作成
+3. **開発・品質チェック**: 機能実装とコード品質確保
 4. **Pull Request**: レビュー依頼
 5. **マージ**: レビュー承認後にマージ
 
@@ -116,7 +207,6 @@ Types:
 - [Security]: セキュリティ関連
 - [Performance]: パフォーマンス改善
 - [Refactor]: リファクタリング
-- [Test]: テスト追加・修正
 - [Docs]: ドキュメント更新
 
 Example:
@@ -144,8 +234,7 @@ Backend (Rails)
 │   ├── services/           # ビジネスロジック
 │   └── lib/                # ライブラリ
 ├── config/                 # 設定ファイル
-├── db/                     # データベーススキーマ・マイグレーション
-└── test/                   # テストファイル
+└── db/                     # データベーススキーマ・マイグレーション
 ```
 
 ### データフロー
@@ -286,127 +375,29 @@ export function useRepositories(filters?: RepositoryFilters) {
 }
 ```
 
-## テスト戦略
+## 品質管理
 
-### Backend Testing
+### コード品質チェック
 
-#### Model Tests
-```ruby
-# test/models/user_test.rb
-class UserTest < ActiveSupport::TestCase
-  test "should create user from github oauth data" do
-    github_data = {
-      'id' => 12345,
-      'login' => 'testuser',
-      'name' => 'Test User'
-    }
-    
-    user = User.from_github_oauth(github_data, 'access_token')
-    
-    assert user.persisted?
-    assert_equal 12345, user.github_id
-    assert_equal 'testuser', user.username
-  end
-end
+#### Task Runner による品質管理
+```bash
+# 全体の品質チェック
+task ci:all
+
+# フロントエンド品質チェック
+task ci:frontend    # Biome + ESLint + TypeScript
+
+# バックエンド品質チェック
+task ci:backend     # RuboCop
+
+# コードフォーマット実行
+task format         # 全体フォーマット
 ```
 
-#### Controller Tests
-```ruby
-# test/controllers/repositories_controller_test.rb
-class RepositoriesControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @user = users(:one)
-    @token = JwtToken.encode(user_id: @user.id)
-  end
-
-  test "should get repositories" do
-    get repositories_url,
-        headers: { 'Authorization' => "Bearer #{@token}" }
-    
-    assert_response :success
-    assert_not_empty JSON.parse(response.body)['repositories']
-  end
-end
-```
-
-#### Service Tests
-```ruby
-# test/services/ai_analysis_service_test.rb
-class AiAnalysisServiceTest < ActiveSupport::TestCase
-  setup do
-    @user = users(:one)
-    @service = AiAnalysisService.new(@user)
-  end
-
-  test "should analyze profile successfully" do
-    VCR.use_cassette("ai_analysis") do
-      analysis = @service.analyze_profile
-      
-      assert_not_nil analysis
-      assert_not_empty analysis.summary
-    end
-  end
-end
-```
-
-### Frontend Testing
-
-#### Component Tests
-```typescript
-// __tests__/components/UserProfile.test.tsx
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import UserProfile from '@/components/UserProfile';
-
-describe('UserProfile', () => {
-  const mockUser = {
-    id: 1,
-    name: 'Test User',
-    username: 'testuser'
-  };
-
-  test('renders user information', () => {
-    render(<UserProfile user={mockUser} onUpdate={() => {}} />);
-    
-    expect(screen.getByText('Test User')).toBeInTheDocument();
-  });
-
-  test('calls onUpdate when update button clicked', async () => {
-    const mockOnUpdate = jest.fn();
-    render(<UserProfile user={mockUser} onUpdate={mockOnUpdate} />);
-    
-    fireEvent.click(screen.getByText('Update'));
-    
-    await waitFor(() => {
-      expect(mockOnUpdate).toHaveBeenCalled();
-    });
-  });
-});
-```
-
-#### API Hook Tests
-```typescript
-// __tests__/hooks/useRepositories.test.ts
-import { renderHook, waitFor } from '@testing-library/react';
-import { useRepositories } from '@/hooks/useRepositories';
-
-// Mock API
-jest.mock('@/lib/api');
-
-describe('useRepositories', () => {
-  test('fetches repositories successfully', async () => {
-    const mockRepositories = [{ id: 1, name: 'test-repo' }];
-    (api.get as jest.Mock).mockResolvedValue({ repositories: mockRepositories });
-
-    const { result } = renderHook(() => useRepositories());
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    expect(result.current.repositories).toEqual(mockRepositories);
-  });
-});
-```
+#### GitHub Actions による自動チェック
+- Pull Request時の自動品質チェック
+- `main`/`develop`ブランチへのプッシュ時チェック
+- 高速フィードバック（平均90秒以内）
 
 ## デバッグ・トラブルシューティング
 
@@ -654,9 +645,7 @@ const SafeHTML = ({ content }: { content: string }) => {
 ## リリースプロセス
 
 ### プリリリースチェックリスト
-- [ ] 全テスト通過確認
-- [ ] セキュリティスキャン実行
-- [ ] パフォーマンステスト実行
+- [ ] 全品質チェック通過確認 (`task ci:all`)
 - [ ] 依存関係の脆弱性チェック
 - [ ] 本番環境変数設定確認
 - [ ] データベースマイグレーション確認
