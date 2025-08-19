@@ -1,0 +1,54 @@
+name: Full CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  frontend-ci:
+    name: Frontend CI
+    uses: ./.github/workflows/frontend-ci.yml
+
+  backend-ci:
+    name: Backend CI
+    uses: ./.github/workflows/backend-ci.yml
+
+  integration-check:
+    name: Integration Check
+    runs-on: ubuntu-latest
+    needs: [frontend-ci, backend-ci]
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+
+      - name: Validate Taskfile
+        run: task --list
+
+      - name: Check project structure
+        run: |
+          echo "✅ Project structure validation"
+          ls -la
+          ls -la frontend/
+          ls -la backend/
+
+  deployment-ready:
+    name: Deployment Ready
+    runs-on: ubuntu-latest
+    needs: [frontend-ci, backend-ci, integration-check]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Deployment ready notification
+        run: |
+          echo "🚀 All checks passed! Ready for deployment"
+          echo "Frontend: ✅ Biome + ESLint + TypeScript"
+          echo "Backend: ✅ RuboCop"
