@@ -1,0 +1,212 @@
+version: '3'
+
+vars:
+  BACKEND_DIR: ./backend
+  FRONTEND_DIR: ./frontend
+
+tasks:
+  # セットアップタスク
+  install:
+    desc: "依存関係をインストール（backend + frontend）"
+    deps: [backend:install, frontend:install]
+
+  # 開発サーバー起動
+  dev:
+    desc: "開発サーバーを起動（backend + frontend）"
+    cmds:
+      - task kill-ports
+      - echo "🚀 Starting development servers..."
+      - echo ""
+      - task --parallel backend:dev frontend:dev
+
+  kill-ports:
+    desc: "開発ポートをクリーンアップ"
+    cmds:
+      - lsof -ti:3000,3001 | xargs -r kill -9 || true
+      - pkill -f "rails server|next dev" || true
+
+  # ビルド
+  build:
+    desc: "全体をビルド"
+    deps: [backend:build, frontend:build]
+
+  # テスト
+  test:
+    desc: "テストは設定されていません"
+    cmds:
+      - echo "フロントエンド・バックエンドともにテストが設定されていません"
+
+  # リント
+  lint:
+    desc: "全体のリントを実行"
+    deps: [backend:lint, frontend:lint]
+
+  # クリーンアップ
+  clean:
+    desc: "ビルド成果物をクリーンアップ"
+    deps: [backend:clean, frontend:clean]
+
+  # Backend Tasks
+  backend:install:
+    desc: "Railsの依存関係をインストール"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle install
+
+  backend:dev:
+    desc: "Rails開発サーバーを起動"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails server -p 3000 2>&1 | sed 's/^/[BACKEND]  | /'
+
+  backend:build:
+    desc: "Railsアプリケーションをビルド"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails assets:precompile
+
+  backend:test:
+    desc: "テストは設定されていません"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - echo "テストが設定されていません"
+
+  backend:lint:
+    desc: "Railsのコードスタイルをチェック"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rubocop
+
+  backend:clean:
+    desc: "Railsの一時ファイルをクリーンアップ"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - rm -rf tmp/cache/*
+      - rm -rf log/*.log
+      - rm -rf public/assets
+
+  backend:db:create:
+    desc: "データベースを作成"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails db:create
+
+  backend:db:migrate:
+    desc: "データベースマイグレーションを実行"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails db:migrate
+
+  backend:db:seed:
+    desc: "シードデータを投入"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails db:seed
+
+  backend:db:reset:
+    desc: "データベースをリセット"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rails db:drop db:create db:migrate db:seed
+
+  # Frontend Tasks
+  frontend:install:
+    desc: "Next.jsの依存関係をインストール"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm install
+
+  frontend:dev:
+    desc: "Next.js開発サーバーを起動"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm dev 2>&1 | sed 's/^/[FRONTEND] | /'
+
+  frontend:build:
+    desc: "Next.jsアプリケーションをビルド"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm build
+
+  frontend:start:
+    desc: "Next.js本番サーバーを起動"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm start
+
+  frontend:test:
+    desc: "フロントエンドのテストを実行"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - echo "テストが設定されていません"
+
+  frontend:lint:
+    desc: "フロントエンドのリントを実行（Biome + ESLint）"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm lint
+
+  frontend:clean:
+    desc: "フロントエンドのビルド成果物をクリーンアップ"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - rm -rf .next
+      - rm -rf out
+      - rm -rf node_modules/.cache
+
+  # Docker関連タスク
+  docker:build:
+    desc: "Dockerイメージをビルド"
+    cmds:
+      - docker-compose build
+
+  docker:up:
+    desc: "Dockerコンテナを起動"
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    desc: "Dockerコンテナを停止"
+    cmds:
+      - docker-compose down
+
+  docker:logs:
+    desc: "Dockerコンテナのログを表示"
+    cmds:
+      - docker-compose logs -f
+
+  # CI/CDタスク
+  ci:frontend:
+    desc: "フロントエンドのCI/CDチェック（Biome + ESLint + TypeScript）"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm biome check .
+      - pnpm next lint
+      - pnpm tsc --noEmit
+
+  ci:backend:
+    desc: "バックエンドのCI/CDチェック（RuboCop）"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rubocop
+
+  ci:all:
+    desc: "全体のCI/CDチェック"
+    deps: [ci:frontend, ci:backend]
+
+  # ユーティリティタスク
+  format:
+    desc: "コード全体をフォーマット"
+    deps: [backend:format, frontend:format]
+
+  backend:format:
+    desc: "バックエンドコードをフォーマット"
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - bundle exec rubocop -a
+
+  frontend:format:
+    desc: "フロントエンドコードをフォーマット（Biome + ESLint）"
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm lint:fix
