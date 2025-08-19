@@ -94,32 +94,92 @@ Engineer Connectは、このような**新規エンジニア参入者**と**既�
 
 ## ⚡ クイックスタート
 
+### 前提条件
+- **Go Task**: タスクランナー ([インストールガイド](https://taskfile.dev/installation/))
+- **pnpm**: フロントエンドパッケージマネージャー
+- **Ruby 3.3.7**: バックエンド環境
+- **Node.js 20+**: フロントエンド環境
+- **PostgreSQL**: データベース
+
 ### 環境変数設定
 ```bash
-# Backend (.env)
-cp backend/.env.example backend/.env
-# 必要な値を設定
-
-# Frontend (.env.local)
-cp frontend/.env.example frontend/.env.local
-# 必要な値を設定
+# ルート階層の.envファイルを編集
+cp .env.example .env  # 実際には.envが既に存在
+# BACKEND_PORT=3000, FRONTEND_PORT=3001 など
 ```
 
-### 起動方法
+### 🚀 Task による一括開発環境セットアップ
+```bash
+# 依存関係のインストール
+task install
+
+# 開発サーバー起動（両方同時）
+task dev
+
+# 個別起動も可能
+task backend:dev   # Rails (port 3000)
+task frontend:dev  # Next.js (port 3001)
+```
+
+### 🔍 コード品質チェック
+```bash
+# 全体のコード品質チェック
+task ci:all
+
+# フロントエンド（Biome + ESLint + TypeScript）
+task ci:frontend
+
+# バックエンド（RuboCop）
+task ci:backend
+```
+
+### 🧹 コードフォーマット
+```bash
+# 全体のフォーマット実行
+task format
+
+# 個別フォーマット
+task frontend:format  # Biome + ESLint自動修正
+task backend:format   # RuboCop自動修正
+```
+
+### 従来の手動起動方法
 ```bash
 # Backend
 cd backend
 bundle install
 rails db:create db:migrate
-rails server
+rails server -p 3000
 
 # Frontend (別ターミナル)
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev  # port 3001で起動
 ```
 
-アプリケーションは http://localhost:3000 でアクセス可能です。
+アプリケーション：
+- **Backend API**: http://localhost:3000
+- **Frontend**: http://localhost:3001
+
+## 🔄 CI/CD パイプライン
+
+このプロジェクトでは**GitHub Actions**による自動CI/CDが設定されています：
+
+### 🚦 自動品質チェック
+- **Frontend**: Biome + ESLint + TypeScript型チェック
+- **Backend**: RuboCop コードスタイルチェック
+- **Trigger**: `main`/`develop`ブランチへのPush・Pull Request
+
+### ⚡ 高速フィードバック
+- テスト・ビルドを除外した軽量CI設計
+- 開発中の迅速なフィードバックを重視
+- 並行実行による最適化
+
+### 📋 ワークフロー詳細
+```bash
+# ローカルでのCI実行（GitHub Actions相当）
+task ci:all  # 全ての品質チェックを実行
+```
 
 ## 📚 ドキュメント
 
@@ -127,6 +187,8 @@ npm run dev
 - [API仕様](./docs/api-specification.md)
 - [デプロイガイド](./docs/deployment-guide.md)
 - [開発ガイド](./docs/development-guide.md)
+- [Task ランナー詳細](./docs/development-guide.md#task-runner)
+- [CI/CD パイプライン詳細](./docs/ci-cd-guide.md)
 
 ## 🎯 対象ユーザー
 
