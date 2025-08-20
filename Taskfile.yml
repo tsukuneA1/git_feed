@@ -194,6 +194,18 @@ tasks:
     desc: "全体のCI/CDチェック"
     deps: [ci:frontend, ci:backend]
 
+  # Pre-commit hooks
+  hooks:install:
+    desc: "Git hooksを設定"
+    cmds:
+      - git config core.hooksPath .githooks
+      - echo "✅ Git hooks configured to use .githooks/"
+
+  hooks:test:
+    desc: "Pre-commit hooksをテスト実行"
+    cmds:
+      - .githooks/pre-commit
+
   # ユーティリティタスク
   format:
     desc: "コード全体をフォーマット"
