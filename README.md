@@ -143,6 +143,18 @@ task frontend:format  # Biome + ESLint自動修正
 task backend:format   # RuboCop自動修正
 ```
 
+### 🪝 Pre-commit Hooks
+```bash
+# Git hooksを設定（初回のみ）
+task hooks:install
+
+# Pre-commit hookをテスト実行
+task hooks:test
+
+# コミット時に自動でCI相当のチェックが実行されます
+git commit -m "feat: new feature"  # 自動でBiome/ESLint/TypeScript/RuboCopが実行
+```
+
 ### 従来の手動起動方法
 ```bash
 # Backend

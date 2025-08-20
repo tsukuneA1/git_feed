@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Pre-commit hook for CI checks
+set -e
+
+echo "🔍 Running pre-commit CI checks..."
+
+# Get list of changed files
+CHANGED_FILES=$(git diff --cached --name-only)
+
+# Check if frontend files changed
+if echo "$CHANGED_FILES" | grep -q "^frontend/"; then
+    echo "📱 Frontend files changed, running frontend checks..."
+    
+    echo "  ↳ Running Biome check..."
+    cd frontend && pnpm biome check . || exit 1
+    
+    echo "  ↳ Running ESLint check..."
+    pnpm next lint || exit 1
+    
+    echo "  ↳ Running TypeScript check..."
+    pnpm tsc --noEmit || exit 1
+    
+    cd ..
+    echo "✅ Frontend checks passed!"
+fi
+
+# Check if backend files changed
+if echo "$CHANGED_FILES" | grep -q "^backend/"; then
+    echo "⚡ Backend files changed, running backend checks..."
+    
+    echo "  ↳ Running RuboCop check..."
+    cd backend && bundle exec rubocop || exit 1
+    
+    cd ..
+    echo "✅ Backend checks passed!"
+fi
+
+# Check for .env files
+if echo "$CHANGED_FILES" | grep -E "\\.env$|\\.env\\..*"; then
+    echo "❌ Error: .env files should not be committed!"
+    echo "Please remove .env files from your commit:"
+    echo "$CHANGED_FILES" | grep -E "\\.env$|\\.env\\..*"
+    exit 1
+fi
+
+echo "🎉 All pre-commit checks passed!"

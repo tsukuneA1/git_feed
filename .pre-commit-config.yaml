@@ -1,0 +1,54 @@
+# Pre-commit hooks configuration
+repos:
+  # Frontend checks
+  - repo: local
+    hooks:
+      - id: frontend-biome
+        name: Frontend Biome Check
+        entry: bash -c 'cd frontend && pnpm biome check .'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+        
+      - id: frontend-eslint
+        name: Frontend ESLint Check
+        entry: bash -c 'cd frontend && pnpm next lint'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+        
+      - id: frontend-typescript
+        name: Frontend TypeScript Check
+        entry: bash -c 'cd frontend && pnpm tsc --noEmit'
+        language: system
+        files: ^frontend/
+        pass_filenames: false
+
+  # Backend checks
+  - repo: local
+    hooks:
+      - id: backend-rubocop
+        name: Backend RuboCop Check
+        entry: bash -c 'cd backend && bundle exec rubocop'
+        language: system
+        files: ^backend/
+        pass_filenames: false
+
+  # Task runner alternative (全体チェック)
+  - repo: local
+    hooks:
+      - id: task-ci-all
+        name: Task CI All (Full Check)
+        entry: task ci:all
+        language: system
+        pass_filenames: false
+        stages: [manual]  # 手動実行のみ
+
+  # 環境変数ファイルチェック
+  - repo: local
+    hooks:
+      - id: check-env-files
+        name: Check for .env files in commit
+        entry: bash -c 'if git diff --cached --name-only | grep -E "\.env$|\.env\..*"; then echo "❌ .env files should not be committed" && exit 1; fi'
+        language: system
+        pass_filenames: false
