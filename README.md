@@ -8,13 +8,6 @@
 ### ER図
 
 
-### デモアプリケーション画像
-> 以下は [デモ版リポジトリ](https://github.com/tsukuneA1/hackathon_demo_app) で実装された機能のスクリーンショットです
-
-<img width="1535" height="934" alt="image" src="https://github.com/user-attachments/assets/1526aa8e-a7f8-4672-bf4e-6e56444f2748" />
-<img width="1532" height="941" alt="image" src="https://github.com/user-attachments/assets/dc406f32-d202-494a-b6f3-ddb40a7d6356" />
-<img width="1535" height="941" alt="image" src="https://github.com/user-attachments/assets/21231dbc-5a82-4a7b-b644-f4ba857bb85d" />
-
 ## 💡 コンセプトと背景
 
 ### AI時代のエンジニア参入者増加への対応
