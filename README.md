@@ -5,8 +5,50 @@
 ### 動機(発案者である内呂の)
 自分はエンジニアの情報を主にTwitterやQiitaやZennなど(たまにYouTube)で取得することが多いです。ただ最近はそこでストレスに感じることがあります。それは「AI系の発信が多すぎて疲れる」ということです。~~特にAI驚き屋みたいな非エンジニアのくせにこのAIがすごいとか言ってインプレッション稼ぎと情報商材を売っている輩は心底嫌いです。~~ 自分はAIツールへのキャッチアップは生産性向上のためにもちろんすべきですが、本質はAIのモデルや性能ではなくその結果生み出される人間が介入したうえでの最終的な生成物の評価だと思っています。なので ~~インプゾンビやポジショントークしかできないクズがいない~~ クリーンな情報収集ツールを作ろうと考えました。エンジニアの一次情報は結局コードなのでGithubのAPIを叩き受動的に他人の活動を垂れ流し、Twitterライクではあるがクリーンなコードの情報を取得できる場を作りたいというのが第一の動機です。またエンジニアの主要な交流ツールがコードと直結しないTwitterであるということも疑問に思っています(ここはGithubでもConversationとかありますが、あれはクローズドでもう少し情報をオープンに取ってこれたらなという思想があります)。時間が余ればAIにリソースを与えてエンジニアの能力向上を促すような教師的な役割をさせたり出来たらなと思います。自分は思想が強いので少し大げさかもしれませんが、こういうことを考えているエンジニアは少なからずいるのではと思っています。
 
-### ER図
+### ER図(暫定)
+```mermaid
+erDiagram
+  users {
+    UUID id PK
+    string username
+    string display_name
+    TIMESTAMP created_at
+  }
 
+  follows {
+    UUID follower_id PK,FK
+    UUID followee_id PK,FK
+    TIMESTAMP created_at
+  }
+
+  posts {
+    UUID id PK
+    UUID user_id FK
+    string content
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+  }
+
+  likes {
+    UUID user_id FK
+    UUID post_id FK
+    TIMESTAMP created_at
+  }
+
+  subscriptions {
+    UUID id PK
+    UUID user_id FK
+    UUID target_actor_id FK
+    UUID target_repo_id FK
+    TIMESTAMP created_at 
+  }
+
+  users ||--o{ posts : "writes"
+  users ||--o{ likes : "likes"
+  posts ||--o{ likes : "is liked by"
+  users ||--o{ follows : "follows"
+  users ||--o{ follows : "is followed by"
+```
 
 ## 💡 コンセプトと背景
 
