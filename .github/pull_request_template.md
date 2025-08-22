@@ -1,6 +1,6 @@
 <!-- I want to review in Japanese. -->
 - [ ] セルフレビューをしたらチェックを入れてください
-- [ ] github copilot以外のAIレビューをしたらチェックを入れてください
+- [ ] github copilotのレビューを依頼し、解決したらチェックを入れてください
 
 ## 関連 issue
 
