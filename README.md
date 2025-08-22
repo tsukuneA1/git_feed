@@ -62,7 +62,7 @@ erDiagram
     TIMESTAMP created_at
   }
 
-  user_interest_tags {
+  user_tag_prefs {
     UUID id PK
     UUID user_id FK
     UUID language_id FK
@@ -77,8 +77,8 @@ erDiagram
   users ||--o{ follows : "follows"
   users ||--o{ follows : "is followed by"
   users ||--o{ github_subscriptions: "creates"
-  users ||--o{ user_interest_tags: "has"
-  tags ||--o{ user_interest_tags: "chosen"
+  users ||--o{ user_tag_prefs: "has"
+  tags ||--o{ user_tag_prefs: "chosen"
   github_subscriptions ||--o{ github_events : "has events"
 ```
 
