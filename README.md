@@ -11,12 +11,13 @@
 erDiagram
   users {
     UUID id PK
-    string username
+    string username UK
     string display_name
     TIMESTAMP created_at
   }
 
   follows {
+    %% CHECK: follower_id != followee_id
     UUID follower_id PK,FK
     UUID followee_id PK,FK
     TIMESTAMP created_at
@@ -31,23 +32,27 @@ erDiagram
   }
 
   likes {
-    UUID user_id FK
-    UUID post_id FK
+    UUID user_id PK,FK
+    UUID post_id PK,FK
     TIMESTAMP created_at
   }
 
   github_subscriptions {
     UUID id PK
     UUID user_id FK
-    UUID target_actor_id FK
-    UUID target_repo_id FK
+    %% XOR: (actor_remote_id IS NOT NULL) XOR (repo_remote_id IS NOT NULL)
+     %% Github RESTのuser/org id(nullable)
+    integer actor_remote_id
+    %% Github RESTのrepo id(nullable)
+    integer repo_remote_id  
+    json filters
     TIMESTAMP created_at 
   }
 
   github_events {
     UUID id PK
     UUID subscription_id FK
-    string event_type PK
+    string event_type
   }
 
   tags {
