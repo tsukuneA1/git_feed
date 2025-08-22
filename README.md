@@ -112,6 +112,28 @@ erDiagram
   tags  ||--o{ event_tags     : "labels"
   github_events ||--o{ event_tags : "has"
 ```
+### シーケンス図(暫定)
+```mermaid
+sequenceDiagram
+  participant S as Scheduler(1–5min)
+  participant Q as Queue(shards)
+  participant J as Fetcher Job
+  participant GH as GitHub API
+  participant DB as DB
+
+  S->>Q: enqueue targets (actor/repo)
+  Q->>J: pop target
+  J->>GH: GET events with ETag / If-Modified-Since
+  alt 304 Not Modified
+    GH-->>J: 304
+    J->>DB: update last_polled_at / etag
+  else New events
+    GH-->>J: events[]
+    J->>DB: UPSERT github_events by remote_event_id (unique)
+    J->>DB: update cursor (last_seen_event_time, etag)
+  end
+
+```
 
 ### 技術選択の理由
 
@@ -157,12 +179,6 @@ erDiagram
 - **Ruby 3.3.7**: バックエンド環境
 - **Node.js 20+**: フロントエンド環境
 - **PostgreSQL**: データベース
-
-### 環境変数設定
-```bash
-# ルート階層の.envファイルを編集
-cp .env.example .env  # 実際には.envが既に存在
-# BACKEND_PORT=3000, FRONTEND_PORT=3001 など
 ```
 
 ### 🚀 Task による一括開発環境セットアップ
@@ -233,16 +249,6 @@ pnpm dev  # port 3001で起動
 ## 🔄 CI/CD パイプライン
 
 このプロジェクトでは**GitHub Actions**による自動CI/CDが設定されています：
-
-### 🚦 自動品質チェック
-- **Frontend**: Biome + ESLint + TypeScript型チェック
-- **Backend**: RuboCop コードスタイルチェック
-- **Trigger**: `main`/`develop`ブランチへのPush・Pull Request
-
-### ⚡ 高速フィードバック
-- テスト・ビルドを除外した軽量CI設計
-- 開発中の迅速なフィードバックを重視
-- 並行実行による最適化
 
 ### 📋 ワークフロー詳細
 ```bash
