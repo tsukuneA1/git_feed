@@ -51,8 +51,22 @@ erDiagram
 
   github_events {
     UUID id PK
-    UUID subscription_id FK
+    string remote_event_id
     string event_type
+    TIMESTAMP event_time
+    TIMESTAMP fetched_at
+    integer actor_remote_id
+    integer repo_remote_id
+    string language_slug
+    UUID language_id FK
+    json payload
+  }
+
+  user_feed_seen {
+    UUID user_id FK
+    string remote_event_id
+    TIMESTAMP seen_at
+    %% PK(user_id, remote_event_id)
   }
 
   tags {
@@ -65,10 +79,17 @@ erDiagram
   user_tag_prefs {
     UUID id PK
     UUID user_id FK
-    UUID language_id FK
+    UUID tag_id FK
     integer weight
     TIMESTAMP created_at
     TIMESTAMP updated_at
+  }
+
+  event_tags {
+    UUID event_id FK
+    UUID tag_id FK
+    numeric share
+    %% PK(event_id, tag_id)
   }
 
   users ||--o{ posts : "writes"
@@ -76,10 +97,20 @@ erDiagram
   posts ||--o{ likes : "is liked by"
   users ||--o{ follows : "follows"
   users ||--o{ follows : "is followed by"
-  users ||--o{ github_subscriptions: "creates"
-  users ||--o{ user_tag_prefs: "has"
-  tags ||--o{ user_tag_prefs: "chosen"
-  github_subscriptions ||--o{ github_events : "has events"
+  users ||--o{ github_subscriptions : "creates"
+  users ||--o{ user_tag_prefs       : "has"
+  tags  ||--o{ user_tag_prefs : "chosen"
+  tags  ||--o{ event_tags     : "labels"
+  github_events ||--o{ event_tags : "has"users ||--o{ posts : "writes"
+  users ||--o{ likes : "likes"
+  posts ||--o{ likes : "is liked by"
+  users ||--o{ follows : "follows"
+  users ||--o{ follows : "is followed by"
+  users ||--o{ github_subscriptions : "creates"
+  users ||--o{ user_tag_prefs       : "has"
+  tags  ||--o{ user_tag_prefs : "chosen"
+  tags  ||--o{ event_tags     : "labels"
+  github_events ||--o{ event_tags : "has"
 ```
 
 ### 技術選択の理由
