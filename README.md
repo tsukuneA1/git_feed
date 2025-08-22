@@ -50,12 +50,30 @@ erDiagram
     string event_type PK
   }
 
+  tags {
+    UUID id PK
+    string slug UK
+    string label
+    TIMESTAMP created_at
+  }
+
+  user_interest_tags {
+    UUID id PK
+    UUID user_id FK
+    UUID language_id FK
+    integer weight
+    TIMESTAMP created_at
+    TIMESTAMP updated_at
+  }
+
   users ||--o{ posts : "writes"
   users ||--o{ likes : "likes"
   posts ||--o{ likes : "is liked by"
   users ||--o{ follows : "follows"
   users ||--o{ follows : "is followed by"
   users ||--o{ github_subscriptions: "creates"
+  users ||--o{ user_interest_tags: "has"
+  tags ||--o{ user_interest_tags: "chosen"
   github_subscriptions ||--o{ github_events : "has events"
 ```
 
