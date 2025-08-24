@@ -15,6 +15,7 @@ erDiagram
     UUID id PK
     string username UK
     string display_name
+    string avatar_url
     TIMESTAMP created_at
   }
 
