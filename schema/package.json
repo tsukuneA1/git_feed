@@ -1,0 +1,7 @@
+{
+  "name": "schema",
+  "version": "0.1.0",
+  "main": "generated/api.ts",
+  "types": "generated/api.ts",
+  "private": true
+}

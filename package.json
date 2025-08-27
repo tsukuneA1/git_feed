@@ -2,6 +2,9 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.23.0"
   },
+  "peerDependencies": {
+    "axios": "^1.0.0"
+  },
   "scripts": {
     "generate:api": "openapi-generator-cli generate -i http://localhost:3000/api-docs/v1/swagger.json -g typescript-axios -o src/generated/api"
   }

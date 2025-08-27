@@ -1,4 +1,4 @@
-import { fetchUsers } from "@/lib/api/users";
+import { fetchUsers } from "schema/api/users";
 
 const Page = async () => {
   const users = await fetchUsers();

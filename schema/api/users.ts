@@ -1,4 +1,4 @@
-import { UsersApi, Configuration } from "@/generated/api";
+import { UsersApi, Configuration } from "../generated";
 
 const config = new Configuration({
   basePath: "http://localhost:3000",
