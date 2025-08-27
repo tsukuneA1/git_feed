@@ -7,7 +7,6 @@ const config = new Configuration({
 const usersApi = new UsersApi(config);
 
 export const fetchUsers = async () => {
-  console.log(usersApi.configuration.basePath);
   const res = await usersApi.usersGet();
   return res.data;
 };
