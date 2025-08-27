@@ -26,3 +26,5 @@ Thumbs.db
 
 # Logs
 *.log
+/backend/vendor/bundle/
+/vendor/bundle/
