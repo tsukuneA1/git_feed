@@ -92,6 +92,9 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     dotenv (3.1.8)
+    dotenv-rails (3.1.8)
+      dotenv (= 3.1.8)
+      railties (>= 6.1)
     drb (2.2.3)
     ed25519 (1.4.0)
     erb (5.0.2)
@@ -198,9 +201,6 @@ GEM
       omniauth-oauth2 (~> 1.8)
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
-      omniauth (~> 2.0)
-    omniauth-rails_csrf_protection (1.0.2)
-      actionpack (>= 4.2)
       omniauth (~> 2.0)
     ostruct (0.6.3)
     parallel (1.27.0)
@@ -371,11 +371,11 @@ DEPENDENCIES
   bootsnap
   brakeman
   debug
+  dotenv-rails
   jwt
   kamal
   omniauth
   omniauth-github
-  omniauth-rails_csrf_protection
   pg (~> 1.1)
   puma (>= 5.0)
   rack-cors

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   scope "/api/v1" do
     post "/auth/refresh", to: "auth#refresh"
     post "/auth/logout", to: "auth#logout"
+    get "/me", to: "users#me"
   end
 
   # Defines the root path route ("/")

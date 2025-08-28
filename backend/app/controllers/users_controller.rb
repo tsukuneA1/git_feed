@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include Authenticatable
+
   before_action :validate_id_integer, only: :show
 
   def index
@@ -13,6 +15,10 @@ class UsersController < ApplicationController
     render json: { error: "ユーザーが見つかりません" }, status: :not_found
   end
 
+  def me
+    render json: current_user.as_json(only: visible_fields), status: :ok
+  end
+
   private
 
   def visible_fields
@@ -24,5 +30,9 @@ class UsersController < ApplicationController
   def validate_id_integer
     return if params[:id].to_s.match?(/\A\d+\z/)
     render json: { error: "不正なIDです" }, status: :bad_request and return
+  end
+
+  def skip_authentication?
+    action_name == "index" || action_name == "show"
   end
 end

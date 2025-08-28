@@ -38,7 +38,6 @@ gem "rack-cors"
 # Authentication gems
 gem "omniauth"
 gem "omniauth-github"
-gem "omniauth-rails_csrf_protection"
 gem "jwt"
 
 group :development, :test do
@@ -50,4 +49,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Load environment variables from .env file
+  gem "dotenv-rails"
 end
