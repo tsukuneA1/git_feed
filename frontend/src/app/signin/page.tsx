@@ -34,7 +34,7 @@ const Page = () => {
             size="lg"
             asChild
           >
-            <a href="http://localhost:3000/auth/github">
+            <a href={`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth/github`}>
               <Github className="mr-2 h-5 w-5" />
               GitHubでサインイン
             </a>
