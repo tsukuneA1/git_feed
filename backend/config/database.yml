@@ -21,8 +21,12 @@ default: &default
 
 
 development:
-  <<: *default
-  database: backend_development
+  primary:
+    <<: *default
+    database: backend_development
+  cable:
+    <<: *default
+    database: backend_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -55,8 +59,12 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: backend_test
+  primary:
+    <<: *default
+    database: backend_test
+  cable:
+    <<: *default
+    database: backend_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -79,6 +87,12 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  url: <%= ENV.fetch("DATABASE_URL") %>
-  pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 3)) %>
-  prepared_statements: false
+  primary:
+    url: <%= ENV.fetch("DATABASE_URL") %>  
+    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
+    prepared_statements: false           
+  cable:
+    # TODO: 将来的には負荷分散のためcableDBを分けることを検討
+    url: <%= ENV.fetch("DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
+    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
+    prepared_statements: false
