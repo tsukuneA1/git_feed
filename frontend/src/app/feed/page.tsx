@@ -1289,13 +1289,12 @@ export default function FeedPage() {
           </div>
 
           {/* Right actions: nav + user + logout */}
-          <div className="ml-auto flex items-center gap-4">
-            <div className="hidden items-center gap-2 sm:flex">
-              {/* simple mock avatar */}
-              <span className="inline-block h-7 w-7 rounded-full bg-gray-200 ring-1 ring-black/5" />
-              <span className="text-sm text-gray-700">tsukune149</span>
+          <div className="ml-auto flex items-center gap-5">
+            <div className="hidden items-center gap-2.5 sm:flex">
+              <span className="inline-block h-9 w-9 rounded-full bg-gray-200 ring-1 ring-black/5" />
+              <span className="text-base font-medium text-gray-800">tsukune149</span>
             </div>
-            <button className="rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50">
+            <button className="rounded-md border px-4 py-2 text-base font-medium hover:bg-gray-50">
               Logout
             </button>
           </div>
