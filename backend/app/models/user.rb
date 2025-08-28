@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_many :refresh_tokens, dependent: :destroy
+
   before_validation :normalize_fields
 
   validates :uid,      uniqueness: { scope: :provider }
@@ -8,6 +10,30 @@ class User < ApplicationRecord
             allow_blank: true,
             format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
                       message: "正しいURLを入力してください" }
+
+  def self.from_omniauth(auth)
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.username = auth.info.nickname
+      user.name = auth.info.name
+      user.avatar_url = auth.info.image
+    end
+  end
+
+  def generate_tokens
+    access_token = JwtService.encode({ user_id: id })
+    refresh_token_string = JwtService.generate_refresh_token
+
+    refresh_tokens.create!(
+      token: refresh_token_string,
+      expires_at: 30.days.from_now
+    )
+
+    { access_token: access_token, refresh_token: refresh_token_string }
+  end
+
+  def invalidate_all_tokens!
+    refresh_tokens.destroy_all
+  end
 
   def update_login_info(ip:, user_agent:)
     ua = user_agent.to_s[0, 255]
