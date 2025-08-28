@@ -448,6 +448,23 @@ const Icons: Record<
   ),
 };
 
+function LogoMark(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6" {...props}>
+      <path fill="currentColor" d="M12 2l7 4v8l-7 8-7-8V6l7-4Zm0 3.2L7 6.9v5.8l5 5.8 5-5.8V6.9l-5-1.7Z" />
+    </svg>
+  );
+}
+
+function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4" {...props}>
+      <path fill="currentColor" d="M15.5 14h-.8l-.3-.3a6 6 0 1 0-1.4 1.4l.3.3v.8l5 5 1.5-1.5-5-5Zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
+    </svg>
+  );
+}
+
+
 /* =========================
    UI bits
    ========================= */
@@ -702,6 +719,7 @@ function LinkPreviewCard({
 /* ===== Feed Row (center column) ===== */
 
 function FeedRow({ activity }: { activity: ActivityItem }) {
+  const [saved, setSaved] = useState(false);
   return (
     <div className="flex gap-3 p-4 hover:bg-muted/50 transition-colors">
       <Avatar src={activity.actor.avatarUrl} alt={activity.actor.username} />
@@ -814,6 +832,23 @@ function FeedRow({ activity }: { activity: ActivityItem }) {
             </Link>
           </div>
         )}
+
+        {/* bookmark only */}
+        <div className="mt-3 flex items-center">
+          <button
+            onClick={() => setSaved((s) => !s)}
+            aria-pressed={saved}
+            className={classNames(
+              "ml-auto inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs",
+              saved
+                ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200"
+                : "bg-card hover:bg-gray-50"
+            )}
+            title={saved ? "Saved" : "Bookmark"}
+          >
+            {saved ? "★ Saved" : "☆ Bookmark"}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -856,10 +891,10 @@ function workLabel(it: ActivityItem) {
 
 function RightSidebar({
   items,
-  topics,
+  topics = [],
 }: {
   items: ActivityItem[];
-  topics: string[];
+  topics?: string[];
 }) {
   const whoToFollow: Actor[] = [
     {
@@ -1116,23 +1151,6 @@ function RightSidebar({
   );
 }
 
-/* =========================
-   Filters for center column
-   ========================= */
-
-const ALL_TOPICS = [
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Ruby on Rails",
-  "Security",
-  "OAuth",
-  "設計",
-  "丁寧さ",
-  "継続力",
-];
-
-// 中央カラムに「常に出さない」タイプ
 const CENTER_EXCLUDED = new Set<ActivityType>([
   "push",
   "pull_request_opened",
@@ -1164,9 +1182,8 @@ export default function FeedPage() {
   const [items, setItems] = useState<ActivityItem[]>(() => [
     ...MOCK_ACTIVITIES,
   ]);
-  const [tab, setTab] = useState<"artifacts" | "work">("artifacts");
-  const [topics, setTopics] = useState<string[]>([]);
   const [audience, setAudience] = useState<"recommended" | "following">("recommended");
+  const [q, setQ] = useState("");
 
   const allUsers = useMemo(
     () => Array.from(new Set(items.map((i) => i.actor.username))),
@@ -1174,36 +1191,40 @@ export default function FeedPage() {
   );
 
   const filtered = useMemo(() => {
-    // topics
-    const topicFiltered = items.filter((it) => {
-      if (topics.length === 0) return true;
-      const hay = [
-        ...(it.aiHighlights ?? []),
-        ...(it.tags ?? []),
-        it.repo?.name ?? "",
-        it.title ?? "",
-      ]
-        .join(" ")
-        .toLowerCase();
-      return topics.every((t) => hay.includes(t.toLowerCase()));
-    });
+    // 中央カラムに出すのは「成果物＋許可された作業（Q&A/フォロー等）」のみ
+    const base = items.filter((it) => isArtifact(it) || isWorkButCenterOK(it));
 
-    // 中央：Artifacts か、作業系でも「CenterOK」なものだけ
-    const byTab =
-      tab === "artifacts"
-        ? topicFiltered.filter(isArtifact)
-        : topicFiltered.filter(isWorkButCenterOK);
-
-    // PR/Issue/Push はここには一切出さない & おすすめ/フォロー中フィルタ
+    // おすすめ / フォロー中
     const audienceFiltered =
       audience === "following"
-        ? byTab.filter((it) => FOLLOWED.has(it.actor.username))
-        : byTab;
+        ? base.filter((it) => FOLLOWED.has(it.actor.username))
+        : base;
 
-    return audienceFiltered
-      .filter((it) => !CENTER_EXCLUDED.has(it.type))
-      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
-  }, [items, tab, topics, audience]);
+    // まず中央で除外するタイプを除く
+    let out = audienceFiltered.filter((it) => !CENTER_EXCLUDED.has(it.type));
+
+    // 検索クエリがあれば簡易全文検索（タイトル/本文/タグ/URL/ユーザー/リポジトリ/コミュニティ）
+    const query = q.trim().toLowerCase();
+    if (query) {
+      out = out.filter((it) => {
+        const hay = [
+          it.title ?? "",
+          it.summary ?? "",
+          it.url ?? "",
+          (it.tags ?? []).join(" "),
+          it.actor.username,
+          it.repo?.name ?? "",
+          it.community?.name ?? "",
+          it.community?.slug ?? "",
+        ]
+          .join(" \n ")
+          .toLowerCase();
+        return hay.includes(query);
+      });
+    }
+
+    return out.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+  }, [items, audience, q]);
 
   const onPostQ = (payload: { text: string; to?: string }) => {
     const newItem: ActivityItem = {
@@ -1226,94 +1247,89 @@ export default function FeedPage() {
     setItems((prev) => [newItem, ...prev]);
   };
 
-  const toggleTopic = (t: string) => {
-    setTopics((prev) =>
-      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
-    );
-  };
-
   return (
-    <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[1fr_320px]">
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold">Your feed</h1>
-          <button className="rounded-lg border px-3 py-1.5 text-sm hover:bg-gray-50">
-            Customize
+    <>
+      {/* Top header (Dashboard-like) */}
+      <header className="border-b bg-background">
+        <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+          {/* Brand */}
+          <Link href="/feed" className="flex items-center gap-2 text-base font-semibold">
+            <LogoMark className="text-gray-800" />
+            <span>Engineer Connect</span>
+          </Link>
+
+          {/* Center search */}
+          <div className="flex-1 px-2 sm:px-6">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="relative"
+              role="search"
+              aria-label="Feed search"
+            >
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <SearchIcon className="h-5 w-5" />
+              </span>
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="検索（タイトル・本文・タグ・URL）"
+                className="h-11 w-135 rounded-full border border-border bg-background pl-11 pr-11 text-base outline-ring/50"
+              />
+              {q && (
+                <button
+                  type="button"
+                  onClick={() => setQ("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-2.5 text-xl leading-none text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              )}
+            </form>
+          </div>
+
+          {/* Right actions: nav + user + logout */}
+          <div className="ml-auto flex items-center gap-4">
+            <div className="hidden items-center gap-2 sm:flex">
+              {/* simple mock avatar */}
+              <span className="inline-block h-7 w-7 rounded-full bg-gray-200 ring-1 ring-black/5" />
+              <span className="text-sm text-gray-700">tsukune149</span>
+            </div>
+            <button className="rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50">
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[1fr_320px]">
+        <section className="space-y-3">
+        {/* Twitter-like header tabs */}
+        <div className="-mx-1 flex items-center justify-center gap-6 border-b bg-background px-1 py-2">
+          <button
+            onClick={() => setAudience("recommended")}
+            className={classNames(
+              "rounded-full px-3 py-1 text-sm",
+              audience === "recommended" ? "font-semibold underline decoration-2 underline-offset-4" : "text-gray-500 hover:text-foreground"
+            )}
+          >
+            おすすめ
+          </button>
+          <button
+            onClick={() => setAudience("following")}
+            className={classNames(
+              "rounded-full px-3 py-1 text-sm",
+              audience === "following" ? "font-semibold underline decoration-2 underline-offset-4" : "text-gray-500 hover:text-foreground"
+            )}
+          >
+            フォロー中
           </button>
         </div>
 
-        {/* Tabs: 成果物 / 作業中  +  おすすめ / フォロー中（右寄せ） */}
-        <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-1 text-sm shadow-sm">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setTab("artifacts")}
-              className={classNames(
-                "rounded-lg px-3 py-1.5",
-                tab === "artifacts" ? "bg-muted" : "hover:bg-gray-50"
-              )}
-            >
-              成果物
-            </button>
-            <button
-              onClick={() => setTab("work")}
-              className={classNames(
-                "rounded-lg px-3 py-1.5",
-                tab === "work" ? "bg-muted" : "hover:bg-gray-50"
-              )}
-            >
-              作業中（PR/Issue/Pushは右下へ）
-            </button>
-          </div>
-
-          {/* spacer */}
-          <div className="ml-auto inline-flex overflow-hidden rounded-lg border text-xs">
-            <button
-              onClick={() => setAudience("recommended")}
-              className={classNames(
-                "px-3 py-1",
-                audience === "recommended" ? "bg-muted" : "hover:bg-gray-50"
-              )}
-            >
-              おすすめ
-            </button>
-            <button
-              onClick={() => setAudience("following")}
-              className={classNames(
-                "px-3 py-1 border-l",
-                audience === "following" ? "bg-muted" : "hover:bg-gray-50"
-              )}
-            >
-              フォロー中
-            </button>
-          </div>
-        </div>
 
         {/* Q&A composer */}
         <QnaComposer users={allUsers} onPost={onPostQ} />
 
-        {/* Topic filters */}
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
-          {ALL_TOPICS.map((t) => (
-            <button
-              key={t}
-              onClick={() => toggleTopic(t)}
-              className={classNames(
-                "rounded-full border border-border px-2 py-0.5 text-xs",
-                topics.includes(t) ? "bg-secondary" : "bg-card hover:bg-gray-50"
-              )}
-            >
-              {t}
-            </button>
-          ))}
-          {topics.length > 0 && (
-            <button
-              onClick={() => setTopics([])}
-              className="ml-auto rounded-full border border-border px-2 py-0.5 text-xs hover:bg-gray-50"
-            >
-              クリア
-            </button>
-          )}
-        </div>
 
         {/* Center feed */}
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
@@ -1334,8 +1350,9 @@ export default function FeedPage() {
         </div>
       </section>
 
-      <RightSidebar items={items} topics={topics} />
+      <RightSidebar items={items} />
     </main>
+    </>
   );
 }
 
