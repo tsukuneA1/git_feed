@@ -27,6 +27,12 @@ development:
   cable:
     <<: *default
     database: backend_development
+  queue:
+    <<: *default
+    database: backend_development
+  cache:
+    <<: *default
+    database: backend_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -65,6 +71,12 @@ test:
   cable:
     <<: *default
     database: backend_test
+  queue:
+    <<: *default
+    database: backend_test
+  cache:
+    <<: *default
+    database: backend_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -93,6 +105,14 @@ production:
     prepared_statements: false           
   cable:
     # TODO: 将来的には負荷分散のためcableDBを分けることを検討
+    url: <%= ENV.fetch("DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
+    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
+    prepared_statements: false
+  queue:
+    url: <%= ENV.fetch("DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
+    pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
+    prepared_statements: false
+  cache:
     url: <%= ENV.fetch("DATABASE_URL", ENV.fetch("DATABASE_URL")) %>
     pool: <%= ENV.fetch("DB_POOL", ENV.fetch("RAILS_MAX_THREADS", 5)) %>
     prepared_statements: false
