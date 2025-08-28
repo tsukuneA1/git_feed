@@ -1250,11 +1250,10 @@ export default function FeedPage() {
   return (
     <>
       {/* Top header (Dashboard-like) */}
-      <header className="border-b bg-background">
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
           {/* Brand */}
           <Link href="/feed" className="flex items-center gap-2 text-base font-semibold">
-            <LogoMark className="text-gray-800" />
             <span>Engineer Connect</span>
           </Link>
 
@@ -1292,16 +1291,16 @@ export default function FeedPage() {
           <div className="ml-auto flex items-center gap-5">
             <div className="hidden items-center gap-2.5 sm:flex">
               <span className="inline-block h-9 w-9 rounded-full bg-gray-200 ring-1 ring-black/5" />
-              <span className="text-base font-medium text-gray-800">tsukune149</span>
+              <span className="text-base font-small text-gray-800">tsukune149</span>
             </div>
-            <button className="rounded-md border px-4 py-2 text-base font-medium hover:bg-gray-50">
+            <button className="rounded-md border px-4 py-2 text-base font-small hover:bg-gray-50">
               Logout
             </button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[1fr_320px]">
+      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 pt-24 lg:grid-cols-[1fr_320px]">
         <section className="space-y-3">
         {/* Twitter-like header tabs */}
         <div className="-mx-1 flex items-center justify-center gap-6 border-b bg-background px-1 py-2">
