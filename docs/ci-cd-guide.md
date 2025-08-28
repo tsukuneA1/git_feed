@@ -46,7 +46,6 @@ jobs:
     name: Lint & Type Check
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
       - run: pnpm install --frozen-lockfile
       - run: pnpm biome check .          # Biome lint & format
