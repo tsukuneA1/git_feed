@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import type { SVGProps } from "react";
 import Link from "next/link";
+import type { SVGProps, JSX } from "react";
 
 /* =========================
    Types
