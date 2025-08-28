@@ -17,6 +17,9 @@ Rails.application.routes.draw do
     get "/me", to: "users#me"
   end
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # Root route for render.com deployment
+  root to: proc {
+    body = { status: "ok", service: "api", sha: ENV.fetch("RENDER_GIT_COMMIT", "unknown")[0, 7] }.to_json
+    [ 200, { "Content-Type" => "application/json" }, [ body ] ]
+  }
 end
