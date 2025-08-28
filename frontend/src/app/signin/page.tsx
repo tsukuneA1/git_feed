@@ -1,5 +1,5 @@
 import { Github } from "lucide-react";
-import { SigninHandler } from "@/components/signin-handler";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -29,7 +29,16 @@ const Page = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <SigninHandler />
+          <Button
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+            size="lg"
+            asChild
+          >
+            <a href="http://localhost:3000/auth/github">
+              <Github className="mr-2 h-5 w-5" />
+              GitHubでサインイン
+            </a>
+          </Button>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-border" />

@@ -27,7 +27,7 @@ const Home = () => {
             <h2 className="text-xl font-semibold text-green-800 mb-2">
               認証成功！ 🎉
             </h2>
-            <div className="text-green-700">
+            <div className="text-green-700 flex flex-col items-center">
               <p>
                 <strong>ユーザー名:</strong> {user.username}
               </p>
@@ -39,8 +39,10 @@ const Home = () => {
               {user.avatar_url && (
                 <Image
                   src={user.avatar_url}
-                  alt="Avatar"
-                  className="w-16 h-16 rounded-full mt-2 mx-auto"
+                  alt="User Avatar"
+                  width={100}
+                  height={100}
+                  className="rounded-full mt-2"
                 />
               )}
             </div>
@@ -62,8 +64,6 @@ const Home = () => {
           </Link>
         </div>
       )}
-
-      <Button variant="outline">shadcn/ui test</Button>
     </div>
   );
 };
