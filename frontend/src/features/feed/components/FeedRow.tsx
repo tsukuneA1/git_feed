@@ -5,7 +5,6 @@ import type { ActivityItem } from "@/features/feed/types";
 import { ActivityBadge } from "@/features/feed/components/ActivityBadge";
 import { Avatar } from "@/features/feed/components/Avatar";
 import { Highlights } from "@/features/feed/components/Highlights";
-import { LinkPreviewCard } from "@/features/feed/components/LinkPreviewCard";
 
 function timeAgo(iso: string) {
   const now = Date.now();
@@ -100,11 +99,22 @@ export function FeedRow({ activity }: { activity: ActivityItem }) {
           <p className="mt-1 text-sm text-gray-600">{activity.summary}</p>
         )}
 
-        {activity.url &&
-          (activity.type === "article_published" ||
-            activity.postKind === "link") && (
-            <LinkPreviewCard url={activity.url} preview={activity.preview} />
-          )}
+        {(activity.type === "article_published" || activity.postKind === "link") && (
+          <div className="mt-2 text-[15px] leading-6">
+            {activity.url ? (
+              <a
+                href={activity.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium hover:underline"
+              >
+                {activity.title ?? activity.url}
+              </a>
+            ) : (
+              <span className="font-medium">{activity.title}</span>
+            )}
+          </div>
+        )}
 
         <Highlights items={activity.aiHighlights} />
 
@@ -157,4 +167,3 @@ export function FeedRow({ activity }: { activity: ActivityItem }) {
     </div>
   );
 }
-
