@@ -143,18 +143,21 @@ US(User Story) := ユーザーストーリー、ユーザー視点の最小単�
 P0/P1/P2 := Priority 優先度 
 
 **EPIC:認証**
+<br/>
 US-01(P0)
    - 「Sign in with Github」でサインイン
    - 初回サインインでなければ/feedへ
    - 初回サインインであれば初期設定ページへ
 
 **EPIC:初期設定**
+<br/>
 US-02(P0)
   - 「言語タグ」を3~5個選ぶ
   - その結果Feedに重みが反映
   - user_tag_prefsに保存
 
 **EPIC:Feedを見る(コード一次情報)**
+<br/>
 US-03(P0)
   - `/feed`を開く
   - 新しい順にGithubイベントカードが表示される
@@ -166,9 +169,10 @@ US-04(P0)
   - 新規タブで開く
 US-05(P1)
   - `PRのみ/merge済みのみ/言語`などフィルタできる
-  - 表示が則反映
+  - 表示が即反映
 
 **EPIC:対象を見つけてサブスクリプション**
+<br/>
 US-06(P0)
   - `/discover`で`repo/actor`を検索
   - サジェストから選択
@@ -177,6 +181,7 @@ US-07(P0)
   - github_subscriptionにレコードが追加されFeedに反映
 
 **EPIC:自分の購読を管理**
+<br/>
 US-08(P0)
   - `/subscriptions`で一覧が見える
   - 対象とfilters要約・未読件数が見える
