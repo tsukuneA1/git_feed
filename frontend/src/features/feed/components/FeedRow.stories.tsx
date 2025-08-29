@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { FeedRow } from "./FeedRow";
 import { MOCK_ACTIVITIES } from "@/features/feed/mock";
+import { FeedRow } from "./FeedRow";
 
 const meta: Meta<typeof FeedRow> = {
   title: "Feed/FeedRow",

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import type { ActivityItem } from "@/features/feed/types";
 import { Icons } from "@/features/feed/components/Icons";
+import type { ActivityItem } from "@/features/feed/types";
 
 function timeAgo(iso: string) {
   const now = Date.now();

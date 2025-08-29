@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import type { ActivityType } from "@/features/feed/types";
 import { Icons } from "@/features/feed/components/Icons";
+import type { ActivityType } from "@/features/feed/types";
 
 function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(" ");

@@ -1,15 +1,15 @@
 "use client";
 import type React from "react";
 import { useMemo, useState } from "react";
+import { AudienceTabs } from "@/features/feed/components/AudienceTabs";
+import { FeedRow } from "@/features/feed/components/FeedRow";
+import { QnaComposer } from "@/features/feed/components/QnaComposer";
+import RightSidebar from "@/features/feed/components/RightSidebar";
 import type {
   ActivityItem,
   ActivityType,
   FeedProps,
 } from "@/features/feed/types";
-import { FeedRow } from "@/features/feed/components/FeedRow";
-import { AudienceTabs } from "@/features/feed/components/AudienceTabs";
-import { QnaComposer } from "@/features/feed/components/QnaComposer";
-import RightSidebar from "@/features/feed/components/RightSidebar";
 
 function _timeAgo(iso: string) {
   const now = Date.now();
@@ -217,7 +217,10 @@ export function Feed({
         </div>
 
         <div className="flex items-center justify-center">
-          <button type="button" className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50">
+          <button
+            type="button"
+            className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50"
+          >
             Load more
           </button>
         </div>

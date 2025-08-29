@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
 import Link from "next/link";
-import type { ActivityItem } from "@/features/feed/types";
+import { useState } from "react";
 import { ActivityBadge } from "@/features/feed/components/ActivityBadge";
 import { Avatar } from "@/features/feed/components/Avatar";
 import { Highlights } from "@/features/feed/components/Highlights";
+import type { ActivityItem } from "@/features/feed/types";
 
 function timeAgo(iso: string) {
   const now = Date.now();
