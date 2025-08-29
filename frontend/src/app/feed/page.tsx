@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import { FeedHeader } from "@/features/feed/components/FeedHeader";
 import { Feed } from "@/features/feed/Feed";
 import { MOCK_ACTIVITIES } from "@/features/feed/mock";
@@ -14,4 +13,3 @@ export default function FeedPage() {
     </>
   );
 }
-

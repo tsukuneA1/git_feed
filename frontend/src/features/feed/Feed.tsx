@@ -1,14 +1,17 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import Link from "next/link";
-import type { ActivityItem, ActivityType, FeedProps } from "@/features/feed/types";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type {
+  ActivityItem,
+  ActivityType,
+  FeedProps,
+} from "@/features/feed/types";
 import { FeedRow } from "@/features/feed/components/FeedRow";
-import { Icons } from "@/features/feed/components/Icons";
 import { AudienceTabs } from "@/features/feed/components/AudienceTabs";
 import { QnaComposer } from "@/features/feed/components/QnaComposer";
 import RightSidebar from "@/features/feed/components/RightSidebar";
 
-function timeAgo(iso: string) {
+function _timeAgo(iso: string) {
   const now = Date.now();
   const past = new Date(iso).getTime();
   const diff = Math.max(0, Math.floor((now - past) / 1000));
@@ -21,14 +24,17 @@ function timeAgo(iso: string) {
   return `${d}d`;
 }
 
-function classNames(...xs: Array<string | false | undefined>) {
+function _classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(" ");
 }
 
 function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden className="h-4 w-4" {...props}>
-      <path fill="currentColor" d="M15.5 14h-.8l-.3-.3a6 6 0 1 0-1.4 1.4l.3.3v.8l5 5 1.5-1.5-5-5Zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4" {...props}>
+      <path
+        fill="currentColor"
+        d="M15.5 14h-.8l-.3-.3a6 6 0 1 0-1.4 1.4l.3.3v.8l5 5 1.5-1.5-5-5Zm-5.5 0a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"
+      />
     </svg>
   );
 }
@@ -37,7 +43,7 @@ function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
 
 const FOLLOWED = new Set(["alice", "rails", "vercel"]);
 
-function isWorkByFollowed(it: ActivityItem) {
+function _isWorkByFollowed(it: ActivityItem) {
   return (
     (it.type === "push" ||
       it.type === "pull_request_opened" ||
@@ -46,7 +52,7 @@ function isWorkByFollowed(it: ActivityItem) {
   );
 }
 
-function workLabel(it: ActivityItem) {
+function _workLabel(it: ActivityItem) {
   if (it.type === "push") {
     const n = it.commits?.length ?? 1;
     return `${it.actor.username} pushed ${n} commit${n > 1 ? "s" : ""}${
@@ -99,13 +105,13 @@ export function Feed({
 }: FeedProps) {
   const [items, setItems] = useState<ActivityItem[]>(() => [...initial]);
   const [audience, setAudience] = useState<"recommended" | "following">(
-    defaultAudience
+    defaultAudience,
   );
   const [q, setQ] = useState(defaultQuery);
 
   const allUsers = useMemo(
     () => Array.from(new Set(items.map((i) => i.actor.username))),
-    [items]
+    [items],
   );
 
   const filtered = useMemo(() => {
@@ -141,7 +147,10 @@ export function Feed({
 
   const handlePostQ = (payload: { text: string; to?: string }) => {
     const newItem: ActivityItem = {
-      id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Math.random()),
+      id:
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : String(Math.random()),
       type: "qa_posted",
       actor: {
         username: "you",
@@ -170,7 +179,6 @@ export function Feed({
           <form
             onSubmit={(e) => e.preventDefault()}
             className="relative"
-            role="search"
             aria-label="Feed search"
           >
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -209,7 +217,7 @@ export function Feed({
         </div>
 
         <div className="flex items-center justify-center">
-          <button className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50">
+          <button type="button" className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50">
             Load more
           </button>
         </div>

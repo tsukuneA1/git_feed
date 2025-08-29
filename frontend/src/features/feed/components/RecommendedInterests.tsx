@@ -1,4 +1,4 @@
-import React from "react";
+//
 
 export function RecommendedInterests({
   interests,
@@ -29,4 +29,3 @@ export function RecommendedInterests({
 }
 
 export default RecommendedInterests;
-

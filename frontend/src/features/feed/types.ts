@@ -72,4 +72,3 @@ export type FeedProps = {
   defaultQuery?: string;
   onPostQ?: (payload: { text: string; to?: string }) => void;
 };
-

@@ -1,11 +1,10 @@
-import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { RecommendedInterests } from './RecommendedInterests';
+import type { Meta, StoryObj } from "@storybook/react";
+import { RecommendedInterests } from "./RecommendedInterests";
 
 const meta = {
-  title: 'Feed/RecommendedInterests',
+  title: "Feed/RecommendedInterests",
   component: RecommendedInterests,
-  parameters: { layout: 'padded' },
+  parameters: { layout: "padded" },
 } satisfies Meta<typeof RecommendedInterests>;
 
 export default meta;
@@ -13,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    interests: ['Next.js', 'Design', 'API'],
+    interests: ["Next.js", "Design", "API"],
   },
 };
 

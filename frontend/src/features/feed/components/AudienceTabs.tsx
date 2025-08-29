@@ -1,4 +1,4 @@
-import React from "react";
+//
 
 function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(" ");
@@ -20,12 +20,13 @@ export function AudienceTabs({
       aria-label="Feed audience"
     >
       <button
+        type="button"
         onClick={() => onChange("recommended")}
         className={classNames(
           "rounded-full px-3 py-1 text-sm",
           value === "recommended"
             ? "font-semibold underline decoration-2 underline-offset-4"
-            : "text-gray-500 hover:text-foreground"
+            : "text-gray-500 hover:text-foreground",
         )}
         role="tab"
         aria-selected={value === "recommended"}
@@ -33,12 +34,13 @@ export function AudienceTabs({
         おすすめ
       </button>
       <button
+        type="button"
         onClick={() => onChange("following")}
         className={classNames(
           "rounded-full px-3 py-1 text-sm",
           value === "following"
             ? "font-semibold underline decoration-2 underline-offset-4"
-            : "text-gray-500 hover:text-foreground"
+            : "text-gray-500 hover:text-foreground",
         )}
         role="tab"
         aria-selected={value === "following"}
@@ -48,4 +50,3 @@ export function AudienceTabs({
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export function QnaComposer({
   users,
@@ -36,6 +36,7 @@ export function QnaComposer({
             ))}
           </select>
           <button
+            type="button"
             onClick={() => {
               if (!text.trim()) return;
               onPost({ text: text.trim(), to });
@@ -53,4 +54,3 @@ export function QnaComposer({
 }
 
 export default QnaComposer;
-

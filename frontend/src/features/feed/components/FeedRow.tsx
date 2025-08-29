@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { ActivityItem } from "@/features/feed/types";
 import { ActivityBadge } from "@/features/feed/components/ActivityBadge";
@@ -99,7 +99,8 @@ export function FeedRow({ activity }: { activity: ActivityItem }) {
           <p className="mt-1 text-sm text-gray-600">{activity.summary}</p>
         )}
 
-        {(activity.type === "article_published" || activity.postKind === "link") && (
+        {(activity.type === "article_published" ||
+          activity.postKind === "link") && (
           <div className="mt-2 text-[15px] leading-6">
             {activity.url ? (
               <a
@@ -150,13 +151,14 @@ export function FeedRow({ activity }: { activity: ActivityItem }) {
 
         <div className="mt-3 flex items-center">
           <button
+            type="button"
             onClick={() => setSaved((s) => !s)}
             aria-pressed={saved}
             className={classNames(
               "ml-auto inline-flex items-center gap-1 rounded-md border border-border px-2.5 py-1 text-xs",
               saved
                 ? "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200"
-                : "bg-card hover:bg-gray-50"
+                : "bg-card hover:bg-gray-50",
             )}
             title={saved ? "Saved" : "Bookmark"}
           >

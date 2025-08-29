@@ -1,4 +1,3 @@
-import React from "react";
 import type { JSX } from "react";
 import type { ActivityType } from "@/features/feed/types";
 import { Icons } from "@/features/feed/components/Icons";
@@ -98,7 +97,7 @@ export function ActivityBadge({ type }: { type: ActivityType }) {
     <span
       className={classNames(
         "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ring-1",
-        item.badgeClass
+        item.badgeClass,
       )}
     >
       {item.icon}

@@ -1,5 +1,6 @@
-import React from "react";
 import Image from "next/image";
+// biome-ignore lint/correctness/noUnusedImports: Keep React import for some runtimes/tooling
+import React from "react";
 
 export function Avatar({ src, alt }: { src: string; alt: string }) {
   return (

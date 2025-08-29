@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ActivityItem } from "@/features/feed/types";
 import { Icons } from "@/features/feed/components/Icons";
 
@@ -21,7 +21,9 @@ function classNames(...xs: Array<string | false | undefined>) {
 
 const FOLLOWED = new Set(["alice", "rails", "vercel"]);
 const isWorkByFollowed = (it: ActivityItem) =>
-  (it.type === "push" || it.type === "pull_request_opened" || it.type === "issue_opened") &&
+  (it.type === "push" ||
+    it.type === "pull_request_opened" ||
+    it.type === "issue_opened") &&
   FOLLOWED.has(it.actor.username);
 
 function workLabel(it: ActivityItem) {
@@ -41,20 +43,26 @@ function workLabel(it: ActivityItem) {
 export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
   const base = useMemo(() => items.filter(isWorkByFollowed), [items]);
   const pushOnly = useMemo(() => base.filter((i) => i.type === "push"), [base]);
-  const prOnly = useMemo(() => base.filter((i) => i.type === "pull_request_opened"), [base]);
-  const issueOnly = useMemo(() => base.filter((i) => i.type === "issue_opened"), [base]);
+  const prOnly = useMemo(
+    () => base.filter((i) => i.type === "pull_request_opened"),
+    [base],
+  );
+  const issueOnly = useMemo(
+    () => base.filter((i) => i.type === "issue_opened"),
+    [base],
+  );
 
   const [workFilter, setWorkFilter] = useState<"all" | "push" | "pr" | "issue">(
-    "all"
+    "all",
   );
   const recentWork =
     workFilter === "push"
       ? pushOnly
       : workFilter === "pr"
-      ? prOnly
-      : workFilter === "issue"
-      ? issueOnly
-      : base;
+        ? prOnly
+        : workFilter === "issue"
+          ? issueOnly
+          : base;
 
   return (
     <div className="mt-4 rounded-2xl border border-border bg-card shadow-sm">
@@ -68,10 +76,11 @@ export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
           aria-label="Work type filter"
         >
           <button
+            type="button"
             onClick={() => setWorkFilter("all")}
             className={classNames(
               "px-3 py-1",
-              workFilter === "all" ? "bg-muted" : "hover:bg-gray-50"
+              workFilter === "all" ? "bg-muted" : "hover:bg-gray-50",
             )}
             role="tab"
             aria-selected={workFilter === "all"}
@@ -80,10 +89,11 @@ export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
             All <span className="ml-1 text-gray-500">({base.length})</span>
           </button>
           <button
+            type="button"
             onClick={() => setWorkFilter("push")}
             className={classNames(
               "px-3 py-1 border-l",
-              workFilter === "push" ? "bg-muted" : "hover:bg-gray-50"
+              workFilter === "push" ? "bg-muted" : "hover:bg-gray-50",
             )}
             role="tab"
             aria-selected={workFilter === "push"}
@@ -92,10 +102,11 @@ export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
             Push <span className="ml-1 text-gray-500">({pushOnly.length})</span>
           </button>
           <button
+            type="button"
             onClick={() => setWorkFilter("pr")}
             className={classNames(
               "px-3 py-1 border-l",
-              workFilter === "pr" ? "bg-muted" : "hover:bg-gray-50"
+              workFilter === "pr" ? "bg-muted" : "hover:bg-gray-50",
             )}
             role="tab"
             aria-selected={workFilter === "pr"}
@@ -104,22 +115,26 @@ export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
             PR <span className="ml-1 text-gray-500">({prOnly.length})</span>
           </button>
           <button
+            type="button"
             onClick={() => setWorkFilter("issue")}
             className={classNames(
               "px-3 py-1 border-l",
-              workFilter === "issue" ? "bg-muted" : "hover:bg-gray-50"
+              workFilter === "issue" ? "bg-muted" : "hover:bg-gray-50",
             )}
             role="tab"
             aria-selected={workFilter === "issue"}
             aria-label="Issue"
           >
-            Issue <span className="ml-1 text-gray-500">({issueOnly.length})</span>
+            Issue{" "}
+            <span className="ml-1 text-gray-500">({issueOnly.length})</span>
           </button>
         </div>
       </div>
 
       {recentWork.length === 0 ? (
-        <div className="px-4 pb-4 text-xs text-gray-500">該当する作業はありません</div>
+        <div className="px-4 pb-4 text-xs text-gray-500">
+          該当する作業はありません
+        </div>
       ) : (
         <ul className="divide-y">
           {recentWork.slice(0, 12).map((w) => (
@@ -146,4 +161,3 @@ export function FollowedRecentWork({ items }: { items: ActivityItem[] }) {
 }
 
 export default FollowedRecentWork;
-

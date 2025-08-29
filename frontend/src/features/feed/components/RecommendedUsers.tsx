@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar } from "@/features/feed/components/Avatar";
 import type { Actor } from "@/features/feed/types";
 
@@ -18,6 +17,7 @@ export function RecommendedUsers({
             <Avatar src={u.avatarUrl} alt={u.username} />
             <div className="text-sm font-medium">@{u.username}</div>
             <button
+              type="button"
               className="ml-auto rounded-md border px-2 py-1 text-xs hover:bg-gray-50"
               onClick={() => onFollow?.(u)}
             >
@@ -29,4 +29,3 @@ export function RecommendedUsers({
     </div>
   );
 }
-

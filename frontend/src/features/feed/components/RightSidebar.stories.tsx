@@ -1,12 +1,11 @@
-import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { RightSidebar } from './RightSidebar';
-import { MOCK_ACTIVITIES } from '@/features/feed/mock';
+import type { Meta, StoryObj } from "@storybook/react";
+import { MOCK_ACTIVITIES } from "@/features/feed/mock";
+import { RightSidebar } from "./RightSidebar";
 
 const meta: Meta<typeof RightSidebar> = {
-  title: 'Feed/RightSidebar',
+  title: "Feed/RightSidebar",
   component: RightSidebar,
-  parameters: { layout: 'padded' },
+  parameters: { layout: "padded" },
 };
 
 export default meta;
@@ -21,7 +20,6 @@ export const Default: Story = {
 export const WithTopics: Story = {
   args: {
     items: MOCK_ACTIVITIES,
-    topics: ['Next.js', 'Design', 'API'],
+    topics: ["Next.js", "Design", "API"],
   },
 };
-

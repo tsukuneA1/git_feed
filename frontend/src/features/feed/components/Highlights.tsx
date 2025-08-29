@@ -13,4 +13,3 @@ export function Highlights({ items }: { items?: string[] }) {
     </div>
   );
 }
-import React from "react";

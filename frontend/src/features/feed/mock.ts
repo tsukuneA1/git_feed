@@ -194,4 +194,3 @@ export const MOCK_ACTIVITIES: ActivityItem[] = [
     createdAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
   },
 ];
-
