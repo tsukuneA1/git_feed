@@ -3,12 +3,12 @@ import React from "react";
 import { Feed } from "@/features/feed/Feed";
 import { MOCK_ACTIVITIES } from "@/features/feed/mock";
 
-// v0: ページは薄いラッパー。UI/ロジックは再利用可能な Feed コンポーネントへ集約。
-export default function FeedPage() {
+// 非ルートのPlayground。ページを作らずにUI確認や型/propsの共有に使う。
+export default function FeedPlayground() {
   return (
-    <main className="px-4 py-8">
+    <div className="p-4">
       <Feed items={MOCK_ACTIVITIES} />
-    </main>
+    </div>
   );
 }
 
