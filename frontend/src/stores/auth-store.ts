@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import {
@@ -77,6 +79,6 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-store",
-    },
-  ),
+    }
+  )
 );
