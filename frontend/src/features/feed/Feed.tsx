@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { ActivityItem, ActivityType, FeedProps, Actor } from "@/features/feed/types";
 import { FeedRow } from "@/features/feed/components/FeedRow";
 import { Icons } from "@/features/feed/components/Icons";
+import { AudienceTabs } from "@/features/feed/components/AudienceTabs";
+import { RecommendedUsers } from "@/features/feed/components/RecommendedUsers";
 
 function timeAgo(iso: string) {
   const now = Date.now();
@@ -187,20 +189,7 @@ function RightSidebar({
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
-        <div className="text-sm font-semibold">おすすめユーザー</div>
-        <ul className="mt-2 space-y-2">
-          {whoToFollow.map((u) => (
-            <li key={u.username} className="flex items-center gap-3">
-              <span className="inline-block h-8 w-8 rounded-full bg-gray-200 ring-1 ring-black/5" />
-              <div className="text-sm font-medium">@{u.username}</div>
-              <button className="ml-auto rounded-md border px-2 py-1 text-xs hover:bg-gray-50">
-                Follow
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <RecommendedUsers users={whoToFollow} />
 
       <div className="mt-4 rounded-2xl border border-border bg-card shadow-sm">
         <div className="px-4 pt-3 text-sm font-semibold">
@@ -383,38 +372,7 @@ export function Feed({
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
       <section className="space-y-3">
-        <div
-          className="-mx-1 flex items-center justify-center gap-6 border-b bg-background px-1 py-2"
-          role="tablist"
-          aria-label="Feed audience"
-        >
-          <button
-            onClick={() => setAudience("recommended")}
-            className={classNames(
-              "rounded-full px-3 py-1 text-sm",
-              audience === "recommended"
-                ? "font-semibold underline decoration-2 underline-offset-4"
-                : "text-gray-500 hover:text-foreground"
-            )}
-            role="tab"
-            aria-selected={audience === "recommended"}
-          >
-            おすすめ
-          </button>
-          <button
-            onClick={() => setAudience("following")}
-            className={classNames(
-              "rounded-full px-3 py-1 text-sm",
-              audience === "following"
-                ? "font-semibold underline decoration-2 underline-offset-4"
-                : "text-gray-500 hover:text-foreground"
-            )}
-            role="tab"
-            aria-selected={audience === "following"}
-          >
-            フォロー中
-          </button>
-        </div>
+        <AudienceTabs value={audience} onChange={setAudience} />
 
         <div className="px-1">
           <form
@@ -471,4 +429,3 @@ export function Feed({
 }
 
 export default Feed;
-
