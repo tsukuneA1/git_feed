@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 
 export function Avatar({ src, alt }: { src: string; alt: string }) {
@@ -11,4 +12,3 @@ export function Avatar({ src, alt }: { src: string; alt: string }) {
     />
   );
 }
-

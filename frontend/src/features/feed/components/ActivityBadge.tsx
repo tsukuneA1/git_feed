@@ -1,3 +1,4 @@
+import React from "react";
 import type { JSX } from "react";
 import type { ActivityType } from "@/features/feed/types";
 import { Icons } from "@/features/feed/components/Icons";
@@ -105,4 +106,3 @@ export function ActivityBadge({ type }: { type: ActivityType }) {
     </span>
   );
 }
-

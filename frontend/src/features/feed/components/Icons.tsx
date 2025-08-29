@@ -1,3 +1,4 @@
+import React from "react";
 import type { SVGProps, JSX } from "react";
 
 export type SvgIcon = (props: SVGProps<SVGSVGElement>) => JSX.Element;
@@ -138,4 +139,3 @@ export const Icons: Record<
     </svg>
   ),
 };
-
