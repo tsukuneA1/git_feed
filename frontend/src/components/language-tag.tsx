@@ -12,6 +12,7 @@ export const LanguageTag = ({
   return (
     <button
       onClick={onClicked}
+      type="button"
       className={`px-3 py-1 rounded border transition 
             ${isSelected ? "bg-white text-black" : "bg-black text-white"}`}
     >
