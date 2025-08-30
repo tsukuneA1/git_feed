@@ -1,24 +1,13 @@
-import path from "node:path";
-import type { StorybookConfig } from "@storybook/react-vite";
+import type { StorybookConfig } from "@storybook/nextjs-vite";
 
 const config: StorybookConfig = {
-  framework: {
-    name: "@storybook/react-vite",
-    options: {},
-  },
-  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
-  addons: ["@storybook/addon-essentials"],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  addons: [
+    "@storybook/addon-docs",
+    "@storybook/addon-a11y",
+    "@storybook/addon-vitest",
+  ],
+  framework: { name: "@storybook/nextjs-vite", options: {} },
   staticDirs: ["../public"],
-  async viteFinal(config) {
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      "@": path.resolve(__dirname, "../src"),
-      "next/image": path.resolve(__dirname, "./mocks/NextImage.tsx"),
-      "next/link": path.resolve(__dirname, "./mocks/NextLink.tsx"),
-    };
-    return config;
-  },
 };
-
 export default config;
