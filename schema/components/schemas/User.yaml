@@ -14,7 +14,6 @@ properties:
   avatar_url:
     type: string
     format: uri
-    nullable: true
     description: User avatar URL
   provider:
     type: string
@@ -34,6 +33,7 @@ properties:
 required:
   - id
   - username
+  - avatar_url
   - provider
   - uid
   - created_at
