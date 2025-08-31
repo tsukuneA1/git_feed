@@ -1,5 +1,5 @@
 const MainFooter = () => {
-    return(
+    return (
         <footer>
             <p>フッター</p>
         </footer>
