@@ -1,10 +1,18 @@
 import React, {ReactNode} from "react";
+import Image from 'next/image'
 
-const userIcon = () => {
+interface userIconProps {
+    source : string
+}
+
+const userIcon = ({source} : userIconProps) => {
     return (
-        <img 
-        src="frontend/public/vercel.svg"
+        <Image
+        src={source}
         alt="Image of userIcon" 
+        width={100}
+        height={100}
+        className="rounded-full"
         />
     )
 }
