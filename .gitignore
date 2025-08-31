@@ -40,3 +40,6 @@ pnpm-debug.log*
 # Next.js
 .next/
 out/
+
+# gen
+schema/openapi.bundle.yaml
