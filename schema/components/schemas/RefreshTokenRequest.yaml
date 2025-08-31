@@ -1,0 +1,7 @@
+type: object
+properties:
+  refresh_token:
+    type: string
+    description: Valid refresh token
+required:
+  - refresh_token
