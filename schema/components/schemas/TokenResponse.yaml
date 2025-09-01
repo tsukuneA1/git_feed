@@ -1,0 +1,7 @@
+type: object
+properties:
+  access_token:
+    type: string
+    description: JWT access token
+required:
+  - access_token

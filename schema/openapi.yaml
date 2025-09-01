@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: Hackathon W App API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Development
+  - url: https://hackathon-w-app.onrender.com
+    description: Production
+
+paths:
+  # Authentication endpoints
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Refresh the access token using a valid refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/RefreshTokenRequest.yaml'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/TokenResponse.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      description: Invalidate refresh token and logout user
+      operationId: logout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/LogoutRequest.yaml'
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/LogoutResponse.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+
+  /api/v1/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Get current authenticated user information
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/User.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+
+  # OAuth endpoints (handled outside API scope)
+  /auth/github:
+    get:
+      tags:
+        - OAuth
+      summary: GitHub OAuth redirect
+      description: Redirect to GitHub OAuth authorization
+      operationId: githubOAuth
+      responses:
+        '302':
+          description: Redirect to GitHub OAuth
+
+  /auth/github/callback:
+    get:
+      tags:
+        - OAuth
+      summary: GitHub OAuth callback
+      description: Handle GitHub OAuth callback and generate tokens
+      operationId: githubCallback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: GitHub OAuth authorization code
+        - name: state
+          in: query
+          schema:
+            type: string
+          description: OAuth state parameter
+      responses:
+        '302':
+          description: Redirect to frontend with tokens or error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      $ref: './components/schemas/User.yaml'
+    RefreshTokenRequest:
+      $ref: './components/schemas/RefreshTokenRequest.yaml'
+    TokenResponse:
+      $ref: './components/schemas/TokenResponse.yaml'
+    LogoutRequest:
+      $ref: './components/schemas/LogoutRequest.yaml'
+    LogoutResponse:
+      $ref: './components/schemas/LogoutResponse.yaml'
+    Error:
+      $ref: './components/schemas/Error.yaml'
+
+  responses:
+    BadRequest:
+      $ref: './components/responses/BadRequest.yaml'
+    Unauthorized:
+      $ref: './components/responses/Unauthorized.yaml'
+    InternalServerError:
+      $ref: './components/responses/InternalServerError.yaml'

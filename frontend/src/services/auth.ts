@@ -1,9 +1,11 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-interface TokenResponse {
-  access_token: string;
-  refresh_token?: string;
-}
+import type {
+  LogoutRequest,
+  RefreshTokenRequest,
+  User,
+} from "@/lib/api/generated";
+import { logout as logoutAPI, refreshToken } from "@/lib/api/generated";
+import type { ApiError, Result } from "@/types/result";
+import { error, success } from "@/types/result";
 
 interface AuthTokens {
   accessToken: string;
@@ -43,29 +45,19 @@ export const refreshAccessToken = async (): Promise<string | null> => {
   if (!tokens) return null;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refresh_token: tokens.refreshToken,
-      }),
-    });
+    const request: RefreshTokenRequest = {
+      refresh_token: tokens.refreshToken,
+    };
 
-    if (!response.ok) {
-      clearTokens();
-      return null;
-    }
-
-    const data: TokenResponse = await response.json();
+    const response = await refreshToken(request);
+    const newAccessToken = response.access_token;
 
     setTokens({
-      accessToken: data.access_token,
-      refreshToken: tokens.refreshToken, // Keep existing refresh token
+      accessToken: newAccessToken,
+      refreshToken: tokens.refreshToken,
     });
 
-    return data.access_token;
+    return newAccessToken;
   } catch (error) {
     console.error("Token refresh failed:", error);
     clearTokens();
@@ -73,66 +65,16 @@ export const refreshAccessToken = async (): Promise<string | null> => {
   }
 };
 
-export const makeAuthenticatedRequest = async (
-  url: string,
-  options: RequestInit = {},
-): Promise<Response> => {
-  const tokens = getTokens();
-
-  if (!tokens) {
-    throw new Error("No authentication tokens available");
-  }
-
-  const headers = {
-    ...options.headers,
-    Authorization: `Bearer ${tokens.accessToken}`,
-    "Content-Type": "application/json",
-  };
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  // If unauthorized, try to refresh token and retry
-  if (response.status === 401) {
-    const newAccessToken = await refreshAccessToken();
-
-    if (newAccessToken) {
-      const retryHeaders = {
-        ...options.headers,
-        Authorization: `Bearer ${newAccessToken}`,
-        "Content-Type": "application/json",
-      };
-
-      return fetch(url, {
-        ...options,
-        headers: retryHeaders,
-      });
-    } else {
-      // Refresh failed, redirect to login
-      window.location.href = "/signin";
-      throw new Error("Authentication failed");
-    }
-  }
-
-  return response;
-};
-
 export const logout = async (): Promise<void> => {
   const tokens = getTokens();
 
   if (tokens) {
     try {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refresh_token: tokens.refreshToken,
-        }),
-      });
+      const request: LogoutRequest = {
+        refresh_token: tokens.refreshToken,
+      };
+
+      await logoutAPI(request);
     } catch (error) {
       console.error("Logout request failed:", error);
     }
@@ -144,4 +86,74 @@ export const logout = async (): Promise<void> => {
 
 export const isAuthenticated = (): boolean => {
   return getTokens() !== null;
+};
+
+export const getCurrentUserData = async (): Promise<Result<User, ApiError>> => {
+  const tokens = getTokens();
+
+  if (!tokens) {
+    return error({
+      status: 401,
+      message: "No authentication tokens available",
+      code: "NO_TOKENS",
+    });
+  }
+
+  try {
+    const { AXIOS_INSTANCE } = await import("@/lib/api/mutator");
+
+    const response = await AXIOS_INSTANCE.get("/api/v1/me", {
+      headers: {
+        Authorization: `Bearer ${tokens.accessToken}`,
+      },
+    });
+
+    return success(response.data);
+  } catch (err) {
+    const apiError = err as {
+      response?: { status: number; data?: { message?: string } };
+    };
+
+    if (apiError?.response?.status === 401) {
+      const newAccessToken = await refreshAccessToken();
+
+      if (newAccessToken) {
+        try {
+          const { AXIOS_INSTANCE } = await import("@/lib/api/mutator");
+
+          const response = await AXIOS_INSTANCE.get("/api/v1/me", {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+
+          return success(response.data);
+        } catch (retryErr) {
+          const retryError = retryErr as {
+            response?: { status: number; data?: { message?: string } };
+          };
+          return error({
+            status: retryError?.response?.status || 500,
+            message:
+              retryError?.response?.data?.message ||
+              "Failed to fetch user data after token refresh",
+            code: "RETRY_FAILED",
+          });
+        }
+      } else {
+        window.location.href = "/signin";
+        return error({
+          status: 401,
+          message: "Authentication failed",
+          code: "AUTH_FAILED",
+        });
+      }
+    }
+
+    return error({
+      status: apiError?.response?.status || 500,
+      message: apiError?.response?.data?.message || "Failed to fetch user data",
+      code: "FETCH_FAILED",
+    });
+  }
 };
