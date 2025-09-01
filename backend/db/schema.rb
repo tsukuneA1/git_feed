@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2025_08_31_162213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "refresh_tokens", force: :cascade do |t|
     t.bigint "user_id", null: false
