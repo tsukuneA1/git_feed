@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_31_162213) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_01_010551) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
+
+  create_table "github_events", force: :cascade do |t|
+    t.string "remote_event_id"
+    t.string "event_type"
+    t.datetime "event_time"
+    t.datetime "fetched_at"
+    t.integer "actor_remote_id"
+    t.integer "repo_remote_id"
+    t.string "language_slug"
+    t.uuid "language_id"
+    t.jsonb "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "refresh_tokens", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -22,6 +37,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_31_162213) do
     t.datetime "updated_at", null: false
     t.index ["token"], name: "index_refresh_tokens_on_token"
     t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "slug", null: false
+    t.string "label", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
   create_table "users", force: :cascade do |t|
