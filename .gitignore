@@ -27,6 +27,9 @@ Thumbs.db
 # Logs
 *.log
 backend/vendor/
+!backend/vendor/linguist
+!backend/vendor/linguist/languages.yml
+!backend/vendor/linguist/popular.yml
 
 # deps
 node_modules/
