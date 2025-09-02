@@ -40,8 +40,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "slug"
-    t.string "label"
+    t.string "slug", null: false
+    t.string "label", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_tags_on_slug", unique: true

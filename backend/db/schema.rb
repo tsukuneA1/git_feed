@@ -18,8 +18,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
   create_table "github_events", force: :cascade do |t|
     t.string "remote_event_id"
     t.string "event_type"
-    t.datetime "event_time"
-    t.datetime "fetched_at"
+    t.datetime "event_time", precision: nil
+    t.datetime "fetched_at", precision: nil
     t.integer "actor_remote_id"
     t.integer "repo_remote_id"
     t.string "language_slug"
