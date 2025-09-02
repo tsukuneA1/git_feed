@@ -1,6 +1,9 @@
-base = Rails.root.join("vendor/lingulst")
-languages_yml = YAML.sale_load_fule(base.join("languages.yml"))
-popular_set = YAML.sale_load_file(base.join("popular.yml")).map(&:to_s).to_set
+require "yaml"
+require "set"
+
+base = Rails.root.join("vendor/linguist")
+languages_yml = YAML.safe_load_file(base.join("languages.yml"))
+popular_set = YAML.safe_load_file(base.join("popular.yml")).map(&:to_s).to_set
 
 def slugify(name)
     name.downcase
@@ -18,8 +21,9 @@ languages_yml.each do |name, attrs|
             lang_type: attrs["type"].to_s,
             color: attrs["color"],
             tm_scope: attrs["tm_scope"],
-            ace_mode: attrs["ace_scope"],
+            ace_mode: attrs["ace_mode"],
             extensions: Array(attrs["extensions"]).map(&:to_s),
+            aliases: Array(attrs["aliases"]).map(&:to_s),
             popular: popular_set.include?(name),
             created_at: Time.current,
             updated_at: Time.current

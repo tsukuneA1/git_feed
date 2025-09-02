@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_040714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -27,6 +27,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
     t.jsonb "payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "languages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "lang_type", null: false
+    t.string "color"
+    t.string "tm_scope"
+    t.string "ace_mode"
+    t.string "extensions", default: [], array: true
+    t.string "aliases", default: [], array: true
+    t.boolean "popular", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_languages_on_name", unique: true
+    t.index ["slug"], name: "index_languages_on_slug", unique: true
   end
 
   create_table "refresh_tokens", force: :cascade do |t|
