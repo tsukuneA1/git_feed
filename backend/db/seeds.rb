@@ -2,22 +2,35 @@ require "yaml"
 require "set"
 
 base = Rails.root.join("vendor/linguist")
-languages_yml = YAML.safe_load_file(base.join("languages.yml"))
-popular_set = YAML.safe_load_file(base.join("popular.yml")).map(&:to_s).to_set
+unless File.exist?(base)
+  puts "[seed] ERROR: Directory not found: #{base}"
+  exit(1)
+end
+languages_yml_path = base.join("languages.yml")
+unless File.exist?(languages_yml_path)
+  puts "[seed] ERROR: File not found: #{languages_yml_path}"
+  exit(1)
+end
+popular_yml_path = base.join("popular.yml")
+unless File.exist?(popular_yml_path)
+  puts "[seed] ERROR: File not found: #{popular_yml_path}"
+  exit(1)
+end
+languages_yml = YAML.safe_load_file(languages_yml_path)
+popular_set = YAML.safe_load_file(popular_yml_path).map(&:to_s).to_set
 
-def slugify(name)
+slugify = ->(name) {
     name.downcase
         .gsub("++", "plus-plus")
         .gsub("#", "sharp")
         .gsub(/\s+/, "-")
         .gsub(/[^a-z0-9\-]/, "")
-end
-
+}
 languages_yml.each do |name, attrs|
     Language.upsert(
         {
             name: name,
-            slug: slugify(name),
+            slug: slugify.call(name),
             lang_type: attrs["type"].to_s,
             color: attrs["color"],
             tm_scope: attrs["tm_scope"],
