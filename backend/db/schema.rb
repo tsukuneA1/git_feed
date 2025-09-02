@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_040714) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -56,8 +56,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_040714) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "slug"
-    t.string "label"
+    t.string "slug", null: false
+    t.string "label", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_tags_on_slug", unique: true
