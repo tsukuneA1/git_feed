@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_094204) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -18,8 +18,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
   create_table "github_events", force: :cascade do |t|
     t.string "remote_event_id"
     t.string "event_type"
-    t.datetime "event_time"
-    t.datetime "fetched_at"
+    t.datetime "event_time", precision: nil
+    t.datetime "fetched_at", precision: nil
     t.integer "actor_remote_id"
     t.integer "repo_remote_id"
     t.string "language_slug"
@@ -27,6 +27,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
     t.jsonb "payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "github_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "github_token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_github_tokens_on_user_id", unique: true
   end
 
   create_table "languages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -74,10 +82,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
     t.string "last_login_user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "github_token"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "github_tokens", "users"
   add_foreign_key "refresh_tokens", "users"
 end
