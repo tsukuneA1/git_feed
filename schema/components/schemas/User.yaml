@@ -1,0 +1,40 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: int64
+    description: User unique identifier
+  username:
+    type: string
+    description: GitHub username
+  name:
+    type: string
+    nullable: true
+    description: User display name
+  avatar_url:
+    type: string
+    format: uri
+    description: User avatar URL
+  provider:
+    type: string
+    enum: [github]
+    description: OAuth provider
+  uid:
+    type: string
+    description: OAuth provider user ID
+  created_at:
+    type: string
+    format: date-time
+    description: User creation timestamp
+  updated_at:
+    type: string
+    format: date-time
+    description: User last update timestamp
+required:
+  - id
+  - username
+  - avatar_url
+  - provider
+  - uid
+  - created_at
+  - updated_at

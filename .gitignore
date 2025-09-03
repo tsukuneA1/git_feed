@@ -26,3 +26,22 @@ Thumbs.db
 
 # Logs
 *.log
+backend/vendor/*
+!backend/vendor/linguist/
+!backend/vendor/linguist/**
+
+# deps
+node_modules/
+.pnpm-store/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+
+# gen
+schema/openapi.bundle.yaml

@@ -14,7 +14,6 @@ tasks:
   dev:
     desc: "開発サーバーを起動（backend + frontend）"
     cmds:
-      - task kill-ports
       - echo "🚀 Starting development servers..."
       - echo ""
       - task --parallel backend:dev frontend:dev

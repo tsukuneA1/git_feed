@@ -1,0 +1,7 @@
+description: Unauthorized
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    example:
+      error: "Invalid or expired token"
