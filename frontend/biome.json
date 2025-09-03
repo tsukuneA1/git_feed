@@ -14,7 +14,8 @@
       "!**/out",
       "!**/dist",
       "!**/.vercel",
-      "!/generated"
+      "!/generated",
+      "!src/types/api.ts"
     ]
   },
   "formatter": {

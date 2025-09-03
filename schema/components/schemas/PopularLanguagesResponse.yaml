@@ -1,0 +1,13 @@
+type: object
+required: [items, total]
+properties:
+  items:
+    type: array
+    items:
+      $ref: './Language.yaml'
+  total:
+    type: integer
+  lastUpdated:
+    type: string
+    format: date-time
+    nullable: true
