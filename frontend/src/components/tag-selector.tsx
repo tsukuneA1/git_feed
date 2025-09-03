@@ -51,11 +51,24 @@ export function TagSelector() {
     });
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
-      // ここでuser_tag_prefsに保存する処理を実装
-      console.log("Selected tags:", selectedTags);
-      setIsComplete(true);
+      try {
+        const response = await fetch("/api/user_tag_prefs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ tags: selectedTags }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to save tag preferences");
+        }
+        setIsComplete(true);
+      } catch (error) {
+        // Optionally, handle error (e.g., show a message to the user)
+        console.error("Error saving tag preferences:", error);
+      }
     }
   };
 
