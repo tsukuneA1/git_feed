@@ -43,7 +43,7 @@ export default function PopularLangsPage() {
       </div>
 
       <ul className="space-y-2">
-        {data!.items.map((lang) => (
+        {data?.items.map((lang) => (
           <li key={lang.slug} className="flex items-center gap-3">
             <span
               aria-hidden
