@@ -29,7 +29,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_094204) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "github_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.text "github_token", null: false
     t.datetime "created_at", null: false
