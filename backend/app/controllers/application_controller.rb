@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
       ActiveRecord::Base.connection.execute(
         "SET LOCAL app.current_user_id = #{Integer(user_id)}"
       )
-     else
+    else
       ActiveRecord::Base.connection.execute(
         "SET LOCAL app.current_user_id = NULL"
       )
