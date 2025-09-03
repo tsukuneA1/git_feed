@@ -11,11 +11,18 @@ Rails.application.routes.draw do
   get "/auth/failure", to: "auth#failure"
 
   # API routes
-  scope "/api/v1" do
-    post "/auth/refresh", to: "auth#refresh"
-    post "/auth/logout", to: "auth#logout"
-    get "/me", to: "users#me"
-    get  "/languages/popular", to: "languages#popular"
+  namespace :api do
+    namespace :v1 do
+      namespace :github do
+        post "repos/sync", to: "repos#sync"
+        get  "repos",      to: "repos#index"
+      end
+
+      post "/auth/refresh", to: "auth#refresh"
+      post "/auth/logout",  to: "auth#logout"
+      get  "/me",           to: "users#me"
+      get  "/languages/popular", to: "languages#popular"
+    end
   end
 
   # Root route for render.com deployment
