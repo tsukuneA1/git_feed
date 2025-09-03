@@ -39,6 +39,7 @@ const AVAILABLE_TAGS = [
 export function TagSelector() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isComplete, setIsComplete] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) => {
@@ -52,9 +53,10 @@ export function TagSelector() {
   };
 
   const handleComplete = async () => {
+    setErrorMessage("");
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
       try {
-        const response = await fetch("/api/user_tag_prefs", {
+        const response = await fetch("/api/v1/user_tag_prefs", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -65,8 +67,8 @@ export function TagSelector() {
           throw new Error("Failed to save tag preferences");
         }
         setIsComplete(true);
-      } catch (error) {
-        // Optionally, handle error (e.g., show a message to the user)
+      } catch (error: any) {
+        setErrorMessage(error?.message || "予期せぬエラーが発生しました");
         console.error("Error saving tag preferences:", error);
       }
     }
@@ -137,7 +139,7 @@ export function TagSelector() {
               "px-8 py-3 rounded-full text-lg font-semibold transition-all duration-200",
               canComplete
                 ? "bg-white text-black hover:bg-gray-200"
-                : "bg-gray-800 text-gray-400 cursor-not-allowed",
+                : "bg-gray-800 text-gray-400 cursor-not-allowed"
             )}
           >
             {"完了"}
@@ -146,6 +148,9 @@ export function TagSelector() {
             <p className="text-sm text-gray-400 mt-2">
               {"3〜5個のタグを選択してください"}
             </p>
+          )}
+          {errorMessage && (
+            <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
           )}
         </div>
       </div>
