@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_045117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -29,6 +29,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "languages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "lang_type", null: false
+    t.string "color"
+    t.string "tm_scope"
+    t.string "ace_mode"
+    t.string "extensions", default: [], array: true
+    t.string "aliases", default: [], array: true
+    t.boolean "popular", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_languages_on_name", unique: true
+    t.index ["slug"], name: "index_languages_on_slug", unique: true
+  end
+
   create_table "refresh_tokens", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "token"
@@ -40,8 +56,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "slug"
-    t.string "label"
+    t.string "slug", null: false
+    t.string "label", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_tags_on_slug", unique: true
@@ -58,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_142114) do
     t.string "last_login_user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "github_token"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
