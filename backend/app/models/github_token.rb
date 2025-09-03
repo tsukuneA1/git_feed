@@ -1,5 +1,5 @@
 class GithubToken < ApplicationRecord
     belongs_to :user
 
-    validates :github_tokens, presence: true
+    validates :github_token, presence: true
 end
