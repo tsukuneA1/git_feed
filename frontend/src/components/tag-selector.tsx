@@ -124,7 +124,7 @@ export function TagSelector() {
               "px-8 py-3 rounded-full text-lg font-semibold transition-all duration-200",
               canComplete
                 ? "bg-white text-black hover:bg-gray-200"
-                : "bg-gray-800 text-gray-400 cursor-not-allowed"
+                : "bg-gray-800 text-gray-400 cursor-not-allowed",
             )}
           >
             {"完了"}
