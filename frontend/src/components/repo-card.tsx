@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, GitBranch } from "lucide-react";
+import { GitBranch, Star } from "lucide-react";
 
 interface RepoCardProps {
   name: string; // レポジトリ名
