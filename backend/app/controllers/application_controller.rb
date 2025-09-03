@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
   around_action :with_db_rls_user
 
   private
@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   def set_db_current_user(user_id)
     if user_id
       ActiveRecord::Base.connection.execute(
-        "SET LOCAL app.current_user_id = #{Integer(user_id)}"
+                "SET LOCAL app.current_user_id = #{ActiveRecord::Base.connection.quote(Integer(user_id))}"
       )
     else
       ActiveRecord::Base.connection.execute(
