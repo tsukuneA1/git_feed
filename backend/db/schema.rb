@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_142633) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_153504) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -38,6 +38,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_142633) do
     t.string "language"
     t.integer "stargazers_count", default: 0, null: false
     t.integer "forks_count", default: 0, null: false
+    t.index ["user_id", "repo_id"], name: "index_github_repos_on_user_id_and_repo_id", unique: true
     t.index ["user_id"], name: "index_github_repos_on_user_id"
   end
 
