@@ -10,7 +10,7 @@ import {
 
 const Page = () => {
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div className="w-full max-w-md px-4 space-y-8">
       <div className="text-center space-y-2">
         <div className="flex justify-center">
           <Github className="h-12 w-12 text-foreground" />

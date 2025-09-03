@@ -18,7 +18,7 @@ const Home = () => {
   }
 
   return (
-    <div className="w-full max-w-md space-y-6 text-center">
+    <div className="w-full max-w-md space-y-6 px-4 text-center">
       <h1 className="text-3xl font-bold">ホームページ</h1>
 
       {isAuthenticated && user ? (
