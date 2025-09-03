@@ -1,5 +1,4 @@
 class Api::V1::Github::ReposController < ApplicationController
-
   def sync
     Github::SyncRepos.call(current_user)
     head :accepted
