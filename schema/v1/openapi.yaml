@@ -1,0 +1,114 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/users":
+    get:
+      summary: ユーザー一覧取得
+      tags:
+      - Users
+      responses:
+        '200':
+          description: ユーザー一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    uid:
+                      type: string
+                    username:
+                      type: string
+                    name:
+                      type: string
+                    avatar_url:
+                      type: string
+                      nullable: true
+                    bio:
+                      type: string
+                      nullable: true
+                    location:
+                      type: string
+                      nullable: true
+                    skills:
+                      type: string
+                      nullable: true
+                    last_login_at:
+                      type: string
+                      format: date_time
+                      nullable: true
+                    role:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date_time
+                    updated_at:
+                      type: string
+                      format: date_time
+  "/users/{id}":
+    get:
+      summary: ユーザー詳細取得
+      tags:
+      - Users
+      parameters:
+      - name: id
+        in: path
+        description: User ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: ユーザー詳細
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  uid:
+                    type: string
+                  username:
+                    type: string
+                  name:
+                    type: string
+                  avatar_url:
+                    type: string
+                    nullable: true
+                  bio:
+                    type: string
+                    nullable: true
+                  location:
+                    type: string
+                    nullable: true
+                  skills:
+                    type: string
+                    nullable: true
+                  last_login_at:
+                    type: string
+                    format: date_time
+                    nullable: true
+                  role:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date_time
+                  updated_at:
+                    type: string
+                    format: date_time
+        '400':
+          description: 不正なID
+        '404':
+          description: ユーザーが見つかりません
+servers:
+- url: http://localhost:3000
+  variables:
+    defaultHost:
+      default: localhost:3000

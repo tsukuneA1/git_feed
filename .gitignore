@@ -44,4 +44,6 @@ pnpm-debug.log*
 out/
 
 # gen
-schema/openapi.bundle.yaml
+schema/openapi.bundle.yaml*.log
+/backend/vendor/bundle/
+/vendor/bundle/
