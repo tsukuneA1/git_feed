@@ -22,7 +22,6 @@ module Github
       now = Time.current
       payloads = repos.map do |r|
         {
-          id: SecureRandom.uuid,
           user_id: user.id,
           repo_id: r.id,
           name: r.name,

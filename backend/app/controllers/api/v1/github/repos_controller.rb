@@ -12,6 +12,6 @@ class Api::V1::Github::ReposController < ApplicationController
     repos = GithubRepo.where(user_id: current_user.id)
                       .order(stargazers_count: :desc)
                       .limit(params.fetch(:limit, 50).to_i.clamp(1, 200))
-    render json: repos.as_json(only: %i[repo_id name full_name private html_url description language stargazers_count forks_count pushed_at])
+    render json: repos.as_json(only: %i[repo_id name html_url description language stargazers_count forks_count])
   end
 end
