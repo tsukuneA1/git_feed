@@ -1,18 +1,12 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import type { User } from "@/lib/api/generated";
 import {
   logout as authLogout,
+  getCurrentUserData,
   isAuthenticated,
-  makeAuthenticatedRequest,
   setTokens,
 } from "@/services/auth";
-
-interface User {
-  id: string;
-  username: string;
-  name?: string;
-  avatar_url?: string;
-}
 
 interface AuthState {
   user: User | null;
@@ -23,8 +17,6 @@ interface AuthState {
   checkAuth: () => Promise<void>;
   fetchUser: () => Promise<void>;
 }
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const useAuthStore = create<AuthState>()(
   devtools(
@@ -45,14 +37,12 @@ export const useAuthStore = create<AuthState>()(
       },
 
       fetchUser: async () => {
-        try {
-          const response = await makeAuthenticatedRequest(`${API_BASE_URL}/me`);
-          if (response.ok) {
-            const userData = await response.json();
-            set({ user: userData });
-          }
-        } catch (error) {
-          console.error("Failed to fetch user:", error);
+        const result = await getCurrentUserData();
+
+        if (result.success) {
+          set({ user: result.data });
+        } else {
+          console.error("Failed to fetch user:", result.error);
           set({ user: null, isAuthenticated: false });
         }
       },
@@ -61,11 +51,12 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
 
         if (isAuthenticated()) {
-          try {
-            await get().fetchUser();
-            set({ isAuthenticated: true });
-          } catch (error) {
-            console.error("Auth check failed:", error);
+          const result = await getCurrentUserData();
+
+          if (result.success) {
+            set({ user: result.data, isAuthenticated: true });
+          } else {
+            console.error("Auth check failed:", result.error);
             set({ user: null, isAuthenticated: false });
           }
         } else {
