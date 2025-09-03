@@ -67,8 +67,13 @@ export function TagSelector() {
           throw new Error("Failed to save tag preferences");
         }
         setIsComplete(true);
-      } catch (error: any) {
-        setErrorMessage(error?.message || "予期せぬエラーが発生しました");
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message || "予期せぬエラーが発生しました");
+        } else {
+          setErrorMessage("予期せぬエラーが発生しました");
+        }
+
         console.error("Error saving tag preferences:", error);
       }
     }
