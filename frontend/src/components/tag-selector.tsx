@@ -54,7 +54,7 @@ export function TagSelector() {
   const handleComplete = async () => {
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
       try {
-        const response = await fetch("/api/user_tag_prefs", {
+        const response = await fetch("/user_tag_prefs", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
