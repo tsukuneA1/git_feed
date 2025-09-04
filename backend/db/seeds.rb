@@ -47,15 +47,10 @@ end
 
 puts "[seed] languages => #{Language.count} rows (#{Language.where(popular: true).count} popular)"
 
-tag_slugs = %w[
-  ai cloud elixir python react java gaming javascript .net mobile testing tools
-  data-science architecture crypto security database machine-learning webdev rust
-  ruby devops open-source golang tech-news nodejs npm typescript
-]
-
-tag_slugs.each do |slug|
-  Tag.find_or_create_by!(slug: slug) do |tag|
-    tag.label = slug.humanize
+# Create tags from existing languages
+Language.find_each do |language|
+  Tag.find_or_create_by!(slug: language.slug) do |tag|
+    tag.label = language.name
   end
 end
 

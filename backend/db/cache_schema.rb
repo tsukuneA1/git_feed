@@ -70,6 +70,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_142150) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tag_id"], name: "index_user_tag_prefs_on_tag_id"
+    t.index ["user_id", "tag_id"], name: "index_user_tag_prefs_on_user_id_and_tag_id", unique: true
     t.index ["user_id"], name: "index_user_tag_prefs_on_user_id"
   end
 
@@ -84,6 +85,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_142150) do
     t.string "last_login_user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "github_token"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
