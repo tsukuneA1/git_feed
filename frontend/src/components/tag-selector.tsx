@@ -65,7 +65,11 @@ export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
     setErrorMessage("");
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
       const tokens = getTokens();
-      const jwtToken = tokens?.accessToken || "";
+      const jwtToken = tokens?.accessToken;
+      if (!jwtToken) {
+        setErrorMessage("認証情報が見つかりません。再度ログインしてください。");
+        return;
+      }
       try {
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (!apiBaseUrl) {
