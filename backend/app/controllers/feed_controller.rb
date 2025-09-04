@@ -3,7 +3,12 @@ class FeedController < ApplicationController
     FEED_REPO_COUNT = 10
 
     def show
-        client = Octokit::Client.new(access_token: ENV["GITHUB_ACCESS_TOKEN"])
+        unless current_user.github_token.present?
+            render json: { error: "GitHub token not found. Please re-authenticate." }, status: :unauthorized
+            return
+        end
+
+        client = Octokit::Client.new(access_token: current_user.github_token)
 
         prefs = current_user.user_tag_prefs.includes(:tag)
         tags = prefs.map { |pref| pref.tag.slug }
