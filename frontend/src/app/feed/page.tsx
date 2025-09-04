@@ -3,7 +3,6 @@ import { GitPullRequest } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { IssueItem } from "@/components/issue-item";
-import { FeedHeader } from "@/features/feed/components/FeedHeader";
 import { getTokens } from "@/services/auth";
 import type {
   EventPayload,
@@ -133,111 +132,102 @@ export default function FeedPage() {
 
   if (loading) {
     return (
-      <>
-        <FeedHeader username="tsukune149" />
-        <main className="mx-auto max-w-6xl px-4 py-6">
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading feed...</p>
-          </div>
-        </main>
-      </>
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading feed...</p>
+        </div>
+      </main>
     );
   }
 
   if (error) {
     return (
-      <>
-        <FeedHeader username="tsukune149" />
-        <main className="mx-auto max-w-6xl px-4 py-6">
-          <div className="text-center py-8">
-            <p className="text-red-600">Error: {error}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Retry
-            </button>
-          </div>
-        </main>
-      </>
+      <main className="mx-auto max-w-6xl px-4 py-6">
+        <div className="text-center py-8">
+          <p className="text-red-600">Error: {error}</p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </main>
     );
   }
 
   return (
-    <>
-      <FeedHeader username="tsukune149" />
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        <div className="bg-white rounded-lg border border-border shadow-sm">
-          <div className="p-4 border-b border-border">
-            <h2 className="text-lg font-semibold">Feed</h2>
-          </div>
-
-          {feedData?.feed_items && feedData.feed_items.length > 0 ? (
-            <>
-              <div className="p-3 border-b border-border bg-blue-50">
-                <div className="text-sm text-blue-700">
-                  取得したイベント: {feedData?.feed_items?.length || 0}件
-                </div>
-              </div>
-              {feedData?.feed_items.map((event: GitHubEvent) => {
-                const payload = convertArrayToObject(event.payload);
-                const parsedEvent: ParsedGitHubEvent = { ...event, payload };
-
-                if (
-                  event.type === "IssuesEvent" &&
-                  "action" in payload &&
-                  payload.action === "opened"
-                ) {
-                  const issuePayload = payload as IssuePayload;
-                  return (
-                    <IssueItem
-                      key={event.id}
-                      issueNumber={issuePayload.issue?.number || 0}
-                      title={issuePayload.issue?.title || "No title"}
-                      author={event.actor.login}
-                      createdAt={formatDate(event.created_at)}
-                      authorAvatarUrl={event.actor.avatar_url}
-                      body={issuePayload.issue?.body}
-                      repoName={event.repo?.name}
-                    />
-                  );
-                }
-
-                if (
-                  event.type === "PullRequestEvent" &&
-                  "action" in payload &&
-                  payload.action === "closed" &&
-                  "pull_request" in payload &&
-                  (payload as PullRequestPayload).pull_request?.merged
-                ) {
-                  return <PullRequestItem key={event.id} event={parsedEvent} />;
-                }
-
-                return (
-                  <div
-                    key={event.id}
-                    className="p-3 border-b border-border bg-yellow-50"
-                  >
-                    <div className="text-sm text-gray-600">
-                      <strong>Debug - Unhandled event:</strong>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      Type: {event.type} | Action:{" "}
-                      {"action" in payload ? payload.action || "N/A" : "N/A"}
-                    </div>
-                  </div>
-                );
-              })}
-            </>
-          ) : (
-            <div className="p-6 text-center text-gray-500">
-              フィードにイベントがありません
-            </div>
-          )}
+    <main className="mx-auto max-w-6xl px-4 py-6">
+      <div className="bg-white rounded-lg border border-border shadow-sm">
+        <div className="p-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Feed</h2>
         </div>
-      </main>
-    </>
+
+        {feedData?.feed_items && feedData.feed_items.length > 0 ? (
+          <>
+            <div className="p-3 border-b border-border bg-blue-50">
+              <div className="text-sm text-blue-700">
+                取得したイベント: {feedData?.feed_items?.length || 0}件
+              </div>
+            </div>
+            {feedData?.feed_items.map((event: GitHubEvent) => {
+              const payload = convertArrayToObject(event.payload);
+              const parsedEvent: ParsedGitHubEvent = { ...event, payload };
+
+              if (
+                event.type === "IssuesEvent" &&
+                "action" in payload &&
+                payload.action === "opened"
+              ) {
+                const issuePayload = payload as IssuePayload;
+                return (
+                  <IssueItem
+                    key={event.id}
+                    issueNumber={issuePayload.issue?.number || 0}
+                    title={issuePayload.issue?.title || "No title"}
+                    author={event.actor.login}
+                    createdAt={formatDate(event.created_at)}
+                    authorAvatarUrl={event.actor.avatar_url}
+                    body={issuePayload.issue?.body}
+                    repoName={event.repo?.name}
+                  />
+                );
+              }
+
+              if (
+                event.type === "PullRequestEvent" &&
+                "action" in payload &&
+                payload.action === "closed" &&
+                "pull_request" in payload &&
+                (payload as PullRequestPayload).pull_request?.merged
+              ) {
+                return <PullRequestItem key={event.id} event={parsedEvent} />;
+              }
+
+              return (
+                <div
+                  key={event.id}
+                  className="p-3 border-b border-border bg-yellow-50"
+                >
+                  <div className="text-sm text-gray-600">
+                    <strong>Debug - Unhandled event:</strong>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Type: {event.type} | Action:{" "}
+                    {"action" in payload ? payload.action || "N/A" : "N/A"}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <div className="p-6 text-center text-gray-500">
+            フィードにイベントがありません
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
