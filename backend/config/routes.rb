@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get "/me", to: "users#me"
     get "/feed", to: "feed#show"
     get  "/languages/popular", to: "languages#popular"
+    get  "/repos", to: "repos#index"
     get  "/user_tag_prefs", to: "api/v1/user_tag_prefs#index"
     post "/user_tag_prefs", to: "api/v1/user_tag_prefs#create"
   end
