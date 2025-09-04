@@ -1,0 +1,21 @@
+type: object
+required: [slug, label]
+properties: 
+  slug:
+    type: string
+    description: Unique key of language
+  label:
+    type: string
+    description: Display name
+  color:
+    type: string
+    nullable: true
+    description: Hex color
+  bytes:
+    type: integer
+    nullable: true
+    description: Popularity metric
+  reposCount:
+    type: integer
+    nullable: true
+    description: Repository count using this language

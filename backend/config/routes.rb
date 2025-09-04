@@ -15,6 +15,9 @@ Rails.application.routes.draw do
     post "/auth/refresh", to: "auth#refresh"
     post "/auth/logout", to: "auth#logout"
     get "/me", to: "users#me"
+    get  "/languages/popular", to: "languages#popular"
+    get  "/user_tag_prefs", to: "api/v1/user_tag_prefs#index"
+    post "/user_tag_prefs", to: "api/v1/user_tag_prefs#create"
   end
 
   # Root route for render.com deployment

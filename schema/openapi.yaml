@@ -112,6 +112,34 @@ paths:
       responses:
         '302':
           description: Redirect to frontend with tokens or error
+  
+  /api/v1/languages/popular:
+    get:
+      tags:
+        - Languages
+      summary: Get popular languages
+      description: Return the list of popular programming languages
+      operationId: getPopularLanguages
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Max items to return
+      responses:
+        '200':
+          description: List of popular languages
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/PopularLanguagesResponse.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '500':
+          $ref: './components/responses/InternalServerError.yaml'
 
 components:
   securitySchemes:
