@@ -17,7 +17,7 @@ export const SigninHandler = () => {
       if (accessToken && refreshToken) {
         try {
           await login(accessToken, refreshToken);
-          router.replace("/");
+          router.replace("/tagselect");
         } catch (error) {
           console.error("Login failed:", error);
           router.replace("/signin");

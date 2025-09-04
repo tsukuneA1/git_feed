@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LanguageTag } from "@/components/language-tag";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getTokens } from "@/services/auth";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -41,6 +43,7 @@ type TagSelectorProps = {
 };
 
 export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
+  const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>(
     initialSelectedTags?.map((t) => t.tag) || [],
   );
@@ -61,11 +64,24 @@ export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
   const handleComplete = async () => {
     setErrorMessage("");
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
+      const tokens = getTokens();
+      const jwtToken = tokens?.accessToken;
+      if (!jwtToken) {
+        setErrorMessage("認証情報が見つかりません。再度ログインしてください。");
+        return;
+      }
       try {
-        const response = await fetch("/api/v1/user_tag_prefs", {
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (!apiBaseUrl) {
+          throw new Error(
+            "API base URL is not set. Please define NEXT_PUBLIC_API_BASE_URL in your environment.",
+          );
+        }
+        const response = await fetch(`${apiBaseUrl}/user_tag_prefs`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({ tags: selectedTags }),
         });
@@ -73,9 +89,10 @@ export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
           throw new Error("Failed to save tag preferences");
         }
         setIsComplete(true);
+        router.push("/feed");
       } catch (error) {
         if (error instanceof Error) {
-          setErrorMessage(error.message || "予期せぬエラーが発生しました");
+          setErrorMessage(error.message);
         } else {
           setErrorMessage("予期せぬエラーが発生しました");
         }
