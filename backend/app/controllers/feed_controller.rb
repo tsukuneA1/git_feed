@@ -10,11 +10,19 @@ class FeedController < ApplicationController
         query = SearchQueryBuilder.new(tags: tags).call
 
         candidate_repos = RepositorySearcher.new(client).call(query: query)
+        Rails.logger.info "Found #{candidate_repos.size} candidate repositories"
+
         selected_repos = candidate_repos.sample(FEED_REPO_COUNT)
+        Rails.logger.info "Selected #{selected_repos.size} repositories: #{selected_repos.map(&:full_name)}"
 
         events = EventFetcher.new(client).call(repos: selected_repos)
+        Rails.logger.info "Found #{events.size} events"
 
-        feed_items = events.map { |event| transform_event(event) }
+        # 最大20件に制限
+        limited_events = events.first(20)
+        Rails.logger.info "Limited to #{limited_events.size} events"
+
+        feed_items = limited_events.map { |event| transform_event(event) }
         render json: { feed_items: feed_items }
     end
 
