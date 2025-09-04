@@ -7,5 +7,6 @@ class CreateUserTagPrefs < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
+    add_index :user_tag_prefs, [ :user_id, :tag_id ], unique: true  # ←これを追加
   end
 end

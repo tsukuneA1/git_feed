@@ -1,6 +1,7 @@
 module Api
   module V1
     class UserTagPrefsController < ApplicationController
+      before_action :authenticate_user!
       # GET /api/v1/user_tag_prefs
       def index
         prefs = current_user.user_tag_prefs.includes(:tag)
@@ -41,7 +42,6 @@ module Api
             )
           end
         end
-        Rails.logger.debug "UserTagPref 登録成功: user_id=#{current_user.id}, tags=#{tags.inspect}" # ログ
         head :created
       end
     end

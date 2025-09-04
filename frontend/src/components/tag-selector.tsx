@@ -62,10 +62,10 @@ export function TagSelector() {
         const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         if (!apiBaseUrl) {
           throw new Error(
-            "API base URL is not set. Please define NEXT_PUBLIC_API_BASE_URL in your environment."
+            "API base URL is not set. Please define NEXT_PUBLIC_API_BASE_URL in your environment.",
           );
         }
-        const response = await fetch(`${apiBaseUrl}/api/v1/user_tag_prefs`, {
+        const response = await fetch(`${apiBaseUrl}/user_tag_prefs`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -79,7 +79,7 @@ export function TagSelector() {
         setIsComplete(true);
       } catch (error) {
         if (error instanceof Error) {
-          setErrorMessage(error.message ?? "予期せぬエラーが発生しました");
+          setErrorMessage(error.message);
         } else {
           setErrorMessage("予期せぬエラーが発生しました");
         }
@@ -154,7 +154,7 @@ export function TagSelector() {
               "px-8 py-3 rounded-full text-lg font-semibold transition-all duration-200",
               canComplete
                 ? "bg-white text-black hover:bg-gray-200"
-                : "bg-gray-800 text-gray-400 cursor-not-allowed"
+                : "bg-gray-800 text-gray-400 cursor-not-allowed",
             )}
           >
             {"完了"}
