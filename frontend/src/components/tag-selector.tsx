@@ -1,10 +1,10 @@
 "use client";
 
-import { LanguageTag } from "@/components/language-tag";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LanguageTag } from "@/components/language-tag";
+import { Button } from "@/components/ui/button";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -53,7 +53,6 @@ export function TagSelector() {
     handleSubmit,
     formState: { errors, isValid },
     setError,
-    clearErrors,
   } = useForm<TagPreferencesFormData>({
     resolver: zodResolver(tagPreferencesSchema),
     mode: "onChange",
