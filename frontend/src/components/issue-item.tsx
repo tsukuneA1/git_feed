@@ -20,7 +20,6 @@ export function IssueItem({
 }: IssueItemProps) {
   return (
     <div className="flex items-center gap-3 p-3 border-b border-border hover:bg-muted/50 transition-colors">
-
       <Circle className="w-4 h-4 text-green-600 fill-green-600 flex-shrink-0 mt-1" />
 
       <div className="flex-1 min-w-0">
