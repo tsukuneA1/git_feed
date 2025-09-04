@@ -11,7 +11,6 @@ interface IssueItemProps {
 }
 
 export function IssueItem({
-  issueId,
   issueNumber,
   title,
   author,
