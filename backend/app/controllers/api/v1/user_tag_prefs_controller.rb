@@ -30,7 +30,7 @@ module Api
             )
           end
         end
-        Rails.logger.info "UserTagPref 登録成功: user_id=#{current_user.id}, tags=#{tags.inspect}" #ログ
+        Rails.logger.info "UserTagPref 登録成功: user_id=#{current_user.id}, tags=#{tags.inspect}" # ログ
         head :created
       end
     end
