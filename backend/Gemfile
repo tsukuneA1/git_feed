@@ -53,3 +53,5 @@ group :development, :test do
   # Load environment variables from .env file
   gem "dotenv-rails"
 end
+
+gem "octokit", "~> 10.0"

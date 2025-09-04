@@ -4,7 +4,6 @@ import { useState } from "react";
 import { LanguageTag } from "@/components/language-tag";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getTokens } from "@/services/auth";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -37,8 +36,14 @@ const AVAILABLE_TAGS = [
   "typescript",
 ];
 
-export function TagSelector() {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+type TagSelectorProps = {
+  initialSelectedTags?: { tag: string; weight: number }[];
+};
+
+export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    initialSelectedTags?.map((t) => t.tag) || [],
+  );
   const [isComplete, setIsComplete] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -56,20 +61,11 @@ export function TagSelector() {
   const handleComplete = async () => {
     setErrorMessage("");
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
-      const tokens = getTokens();
-      const jwtToken = tokens?.accessToken || "";
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        if (!apiBaseUrl) {
-          throw new Error(
-            "API base URL is not set. Please define NEXT_PUBLIC_API_BASE_URL in your environment.",
-          );
-        }
-        const response = await fetch(`${apiBaseUrl}/user_tag_prefs`, {
+        const response = await fetch("/api/v1/user_tag_prefs", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({ tags: selectedTags }),
         });
@@ -79,7 +75,7 @@ export function TagSelector() {
         setIsComplete(true);
       } catch (error) {
         if (error instanceof Error) {
-          setErrorMessage(error.message);
+          setErrorMessage(error.message || "予期せぬエラーが発生しました");
         } else {
           setErrorMessage("予期せぬエラーが発生しました");
         }
