@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { FaGithub } from "react-icons/fa";
+
 const MainFooter = () => {
   return (
     <footer className="bg-black text-white py-8 px-6">

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+
 const MainHeader = () => {
   return (
     <header className="bg-black text-white px-6 py-4 flex items-center justify-between shadow-md">
