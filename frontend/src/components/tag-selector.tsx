@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { LanguageTag } from "@/components/language-tag";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -36,128 +37,123 @@ const AVAILABLE_TAGS = [
   "typescript",
 ];
 
+const tagPreferencesSchema = z.object({
+  tags: z
+    .array(z.string())
+    .min(3, "最低3つのタグを選択してください")
+    .max(5, "最大5つのタグまで選択できます"),
+});
+
+type TagPreferencesFormData = z.infer<typeof tagPreferencesSchema>;
+
 export function TagSelector() {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [isComplete, setIsComplete] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    setValue,
+    watch,
+    handleSubmit,
+    formState: { errors, isValid },
+    setError,
+  } = useForm<TagPreferencesFormData>({
+    resolver: zodResolver(tagPreferencesSchema),
+    mode: "onChange",
+    defaultValues: {
+      tags: [],
+    },
+  });
+
+  const selectedTags = watch("tags");
 
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) => {
-      if (prev.includes(tag)) {
-        return prev.filter((t) => t !== tag);
-      } else if (prev.length < 5) {
-        return [...prev, tag];
-      }
-      return prev;
-    });
+    const currentTags = selectedTags || [];
+    let newTags: string[];
+
+    if (currentTags.includes(tag)) {
+      newTags = currentTags.filter((t: string) => t !== tag);
+    } else if (currentTags.length < 5) {
+      newTags = [...currentTags, tag];
+    } else {
+      return;
+    }
+
+    setValue("tags", newTags, { shouldValidate: true });
   };
 
-  const handleComplete = async () => {
-    setErrorMessage("");
-    if (selectedTags.length >= 3 && selectedTags.length <= 5) {
-      try {
-        const response = await fetch("/api/v1/user_tag_prefs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tags: selectedTags }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to save tag preferences");
-        }
-        setIsComplete(true);
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(error.message || "予期せぬエラーが発生しました");
-        } else {
-          setErrorMessage("予期せぬエラーが発生しました");
-        }
-
-        console.error("Error saving tag preferences:", error);
+  const onSubmit = async (_data: TagPreferencesFormData) => {
+    try {
+      const response = await fetch("/api/v1/user_tag_prefs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tags: selectedTags }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save tag preferences");
       }
+    } catch (error) {
+      setError("root", {
+        type: "manual",
+        message: "タグの保存に失敗しました",
+      });
+
+      console.error("Error saving tag preferences:", error);
     }
   };
-
-  const canComplete = selectedTags.length >= 3 && selectedTags.length <= 5;
-
-  if (isComplete) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            {"設定完了！"}
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {"選択したタグがフィードに反映されます"}
-          </p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {selectedTags.map((tag) => (
-              <span
-                key={tag}
-                className="px-4 py-2 bg-card text-card-foreground rounded-full text-sm font-medium"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-6 bg-black">
       <div className="w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-4 text-balance">
-            {"興味のある技術タグを選択してください"}
-          </h1>
-          <p className="text-gray-400 text-lg">
-            {"3〜5個のタグを選んでフィードをカスタマイズしましょう"}
-          </p>
-          <div className="mt-4">
-            <span className="text-sm text-gray-400">{`選択済み: ${selectedTags.length}/5`}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-3 mb-8 justify-center">
-          {AVAILABLE_TAGS.map((tag) => {
-            const isSelected = selectedTags.includes(tag);
-
-            return (
-              <LanguageTag
-                key={tag}
-                name={tag}
-                isSelected={isSelected}
-                onClicked={() => toggleTag(tag)}
-              />
-            );
-          })}
-        </div>
-
-        <div className="text-center">
-          <Button
-            onClick={handleComplete}
-            disabled={!canComplete}
-            className={cn(
-              "px-8 py-3 rounded-full text-lg font-semibold transition-all duration-200",
-              canComplete
-                ? "bg-white text-black hover:bg-gray-200"
-                : "bg-gray-800 text-gray-400 cursor-not-allowed",
-            )}
-          >
-            {"完了"}
-          </Button>
-          {!canComplete && (
-            <p className="text-sm text-gray-400 mt-2">
-              {"3〜5個のタグを選択してください"}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-4 text-balance">
+              {"興味のある技術タグを選択してください"}
+            </h1>
+            <p className="text-gray-400 text-lg">
+              {"3~5個のタグを選んでフィードをカスタマイズしましょう"}
             </p>
-          )}
-          {errorMessage && (
-            <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
-          )}
-        </div>
+            <div className="mt-4">
+              <span className="text-sm text-gray-400">{`選択済み: ${selectedTags?.length || 0}/5`}</span>
+            </div>
+            {errors.tags && (
+              <p className="text-red-400 text-sm mt-2">{errors.tags.message}</p>
+            )}
+            {errors.root && (
+              <p className="text-red-400 text-sm mt-2">{errors.root.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-3 mb-8 justify-center">
+            {AVAILABLE_TAGS.map((tag) => {
+              const isSelected = selectedTags?.includes(tag) || false;
+
+              return (
+                <LanguageTag
+                  key={tag}
+                  name={tag}
+                  isSelected={isSelected}
+                  onClicked={() => toggleTag(tag)}
+                />
+              );
+            })}
+          </div>
+
+          <div className="text-center">
+            <Button
+              type="submit"
+              disabled={!isValid}
+              className={`p-2 rounded ${
+                isValid ? "bg-gray-500 text-white" : "bg-gray-300 text-gray-600"
+              }`}
+            >
+              {"完了"}
+            </Button>
+            {!isValid && selectedTags?.length !== undefined && (
+              <p className="text-sm text-gray-400 mt-2">
+                {"3〜5個のタグを選択してください"}
+              </p>
+            )}
+          </div>
+        </form>
       </div>
     </div>
   );
