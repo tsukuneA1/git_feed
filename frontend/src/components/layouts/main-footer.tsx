@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {FaGithub} from"react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 const MainFooter = () => {
   return (
     <footer className="bg-black text-white py-8 px-6">
@@ -18,23 +18,33 @@ const MainFooter = () => {
           <h3 className="font-semibold mb-2">リンク</h3>
           <ul className="space-y-1">
             <li>
-              <Link href="/feed" className="hover:text-gray-400 transition-colors">
+              <Link
+                href="/feed"
+                className="hover:text-gray-400 transition-colors"
+              >
                 Feed
               </Link>
             </li>
             <li>
-              <Link href="/settings" className="hover:text-gray-400 transition-colors">
+              <Link
+                href="/settings"
+                className="hover:text-gray-400 transition-colors"
+              >
                 Settings
               </Link>
             </li>
-            </ul>
+          </ul>
         </div>
 
         {/* ソーシャル */}
-        <div>         
+        <div>
           <div className="justify-end items-center flex-col gap-4">
             <h3 className="font-semibold mb-2">Follow us</h3>
-            <Link href="https://github.com/tsukuneA1/hackathon_w_app" target="_blank" className="hover:text-gray-400">
+            <Link
+              href="https://github.com/tsukuneA1/hackathon_w_app"
+              target="_blank"
+              className="hover:text-gray-400"
+            >
               <FaGithub size={20} />
             </Link>
           </div>
