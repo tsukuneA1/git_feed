@@ -15,7 +15,7 @@ class SearchQueryBuilder
 
     private
 
-    attr_render :tags
+    attr_reader :tags
 
     def select_random_tags
         return [] if tags.empty?
