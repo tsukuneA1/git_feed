@@ -16,6 +16,7 @@
     "generate-api": "pnpm schema:bundle && pnpm orval:generate"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "^5.85.6",
     "@tanstack/react-query-devtools": "^5.85.6",
@@ -26,7 +27,9 @@
     "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.62.0",
     "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.5",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

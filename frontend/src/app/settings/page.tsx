@@ -1,5 +1,7 @@
+import React from "react";
+import { TagSelector } from "@/components/tag-selector";
 const Page = () => {
-  return <h1>設定ページ</h1>;
+  return <TagSelector/>;  
 };
 
 export default Page;

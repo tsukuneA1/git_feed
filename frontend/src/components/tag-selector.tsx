@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import {useForm} from "react-hook-form";
 import { LanguageTag } from "@/components/language-tag";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import{ z } from "zod";
+import{ zodResolver } from "@hookform/resolvers/zod";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -72,7 +75,18 @@ export function TagSelector() {
     }
   };
 
-  const canComplete = selectedTags.length >= 3 && selectedTags.length <= 5;
+  const canComplete = z.object({
+  ownerId: z.boolean(),
+  tags: z
+    .array(z.string())
+    .min(3, "最低3つのタグを選択してください")
+    .max(5, "最大5つのタグまで選択できます"),
+});
+
+const { register,handleSubmit, formState: { errors,isValid } } = useForm<FormData>({
+  resolver: zodResolver(canComplete),
+  mode: "onChange",
+});
 
   if (isComplete) {
     return (
@@ -107,7 +121,7 @@ export function TagSelector() {
             {"興味のある技術タグを選択してください"}
           </h1>
           <p className="text-gray-400 text-lg">
-            {"3〜5個のタグを選んでフィードをカスタマイズしましょう"}
+            {"3~5個のタグを選んでフィードをカスタマイズしましょう"}
           </p>
           <div className="mt-4">
             <span className="text-sm text-gray-400">{`選択済み: ${selectedTags.length}/5`}</span>
@@ -133,12 +147,8 @@ export function TagSelector() {
           <Button
             onClick={handleComplete}
             disabled={!canComplete}
-            className={cn(
-              "px-8 py-3 rounded-full text-lg font-semibold transition-all duration-200",
-              canComplete
-                ? "bg-white text-black hover:bg-gray-200"
-                : "bg-gray-800 text-gray-400 cursor-not-allowed",
-            )}
+            className={`p-2 rounded ${
+    canComplete ? "bg-gray-500 text-white" : "bg-gray-300 text-gray-600"}`}
           >
             {"完了"}
           </Button>
