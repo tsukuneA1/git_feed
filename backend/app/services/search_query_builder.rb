@@ -23,7 +23,7 @@ class SearchQueryBuilder
         tags.sample(sample_size)
     end
 
-    def build_language_query(select_random_tags)
+    def build_language_query(selected_tags)
         selected_tags.map { |tag| "language:#{tag}" }.join(" ")
     end
 end

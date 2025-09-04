@@ -15,7 +15,8 @@ Rails.application.routes.draw do
     post "/auth/refresh", to: "auth#refresh"
     post "/auth/logout", to: "auth#logout"
     get "/me", to: "users#me"
-    get  "/languages/popular", to: "languages#popular"
+    get "/languages/popular", to: "languages#popular"
+    get "/feed", to: "feed#show"
   end
 
   # Root route for render.com deployment
