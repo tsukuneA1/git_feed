@@ -1,11 +1,13 @@
 class FeedController < ApplicationController
+    before_action :authenticate_user!
     FEED_REPO_COUNT = 10
 
     def show
         client = Octokit::Client.new(access_token: ENV["GITHUB_ACCESS_TOKEN"])
 
         prefs = current_user.user_tag_prefs.includes(:tag)
-        query = SearchQueryBuilder.new(prefs: prefs).call
+        tags = prefs.map { |pref| pref.tag.slug }
+        query = SearchQueryBuilder.new(tags: tags).call
 
         candidate_repos = RepositorySearcher.new(client).call(query: query)
         selected_repos = candidate_repos.sample(FEED_REPO_COUNT)

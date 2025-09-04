@@ -46,3 +46,12 @@ languages_yml.each do |name, attrs|
 end
 
 puts "[seed] languages => #{Language.count} rows (#{Language.where(popular: true).count} popular)"
+
+# Create tags from existing languages
+Language.find_each do |language|
+  Tag.find_or_create_by!(slug: language.slug) do |tag|
+    tag.label = language.name
+  end
+end
+
+puts "[seed] tags => #{Tag.count} rows"
