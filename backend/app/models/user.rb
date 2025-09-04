@@ -14,11 +14,19 @@ class User < ApplicationRecord
                       message: "正しいURLを入力してください" }
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.username = auth.info.nickname
-      user.name = auth.info.name
-      user.avatar_url = auth.info.image
+    user = where(provider: auth.provider, uid: auth.uid).first_or_create do |new_user|
+      new_user.username = auth.info.nickname
+      new_user.name = auth.info.name
+      new_user.avatar_url = auth.info.image
+      new_user.github_token = auth.credentials.token
     end
+
+    # Update GitHub token for existing users as well
+    if user.persisted? && user.github_token != auth.credentials.token
+      user.update_column(:github_token, auth.credentials.token)
+    end
+
+    user
   end
 
   def generate_tokens
