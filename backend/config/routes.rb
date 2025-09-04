@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get "/me", to: "users#me"
     get  "/languages/popular", to: "languages#popular"
     get  "/user_tag_prefs", to: "api/v1/user_tag_prefs#index"
-    post "/user_tag_prefs", to: "api/user_tag_prefs#create"
+    post "/user_tag_prefs", to: "api/v1/user_tag_prefs#create"
   end
 
   # Root route for render.com deployment

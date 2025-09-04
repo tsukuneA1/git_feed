@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LanguageTag } from "@/components/language-tag";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getTokens } from "@/services/auth";
 
 const AVAILABLE_TAGS = [
   "ai",
@@ -55,17 +56,25 @@ export function TagSelector() {
   const handleComplete = async () => {
     setErrorMessage("");
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
+      const tokens = getTokens();
+      const jwtToken = tokens?.accessToken || "";
+      console.log("jwtToken:", jwtToken);
       try {
-        const response = await fetch("/user_tag_prefs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ tags: selectedTags }),
-        });
+        const response = await fetch(
+          "http://localhost:3000/api/v1/user_tag_prefs",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${jwtToken}`,
+            },
+            body: JSON.stringify({ tags: selectedTags }),
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to save tag preferences");
         }
+        console.log("succeed");
         setIsComplete(true);
       } catch (error) {
         if (error instanceof Error) {

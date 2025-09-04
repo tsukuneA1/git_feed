@@ -84,7 +84,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_142150) do
     t.string "last_login_user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "github_token"
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
