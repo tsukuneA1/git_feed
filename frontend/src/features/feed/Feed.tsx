@@ -172,6 +172,10 @@ export function Feed({
 
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+      <h1 className="text-2xl font-bold text-foreground leading-tight text-balance mb-0">
+        フィード
+      </h1>
+      <div className="h-1.5 w-10 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-full shadow-lg"></div>
       <section className="space-y-3">
         <AudienceTabs value={audience} onChange={setAudience} />
 
@@ -202,9 +206,7 @@ export function Feed({
             )}
           </form>
         </div>
-
         <QnaComposer users={allUsers} onPost={handlePostQ} />
-
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           {filtered.map((a) => (
             <FeedRow activity={a} key={a.id} />
