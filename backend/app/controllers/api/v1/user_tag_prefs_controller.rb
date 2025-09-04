@@ -14,7 +14,11 @@ module Api
 
       # POST /api/v1/user_tag_prefs
       def create
-        tags = params[:tags] # 例: ["python", "ruby", "go"]
+        tags = params[:tags]
+        unless tags.is_a?(Array) && tags.length.between?(3, 5) && tags.all? { |t| t.is_a?(String) && t.present? }
+          render json: { error: "tags must be an array of 3 to 5 non-empty strings" }, status: :bad_request
+          return
+        end
         UserTagPref.transaction do
           # 既存のプリファレンスを削除
           current_user.user_tag_prefs.destroy_all

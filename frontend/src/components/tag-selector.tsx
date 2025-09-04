@@ -76,7 +76,6 @@ export function TagSelector() {
         if (!response.ok) {
           throw new Error("Failed to save tag preferences");
         }
-        console.log("succeed");
         setIsComplete(true);
       } catch (error) {
         if (error instanceof Error) {
