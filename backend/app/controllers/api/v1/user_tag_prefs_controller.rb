@@ -1,7 +1,6 @@
 module Api
   module V1
     class UserTagPrefsController < ApplicationController
-
       # GET /api/v1/user_tag_prefs
       def index
         prefs = current_user.user_tag_prefs.includes(:tag)
