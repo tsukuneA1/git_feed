@@ -58,19 +58,21 @@ export function TagSelector() {
     if (selectedTags.length >= 3 && selectedTags.length <= 5) {
       const tokens = getTokens();
       const jwtToken = tokens?.accessToken || "";
-      console.log("jwtToken:", jwtToken);
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/v1/user_tag_prefs",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${jwtToken}`,
-            },
-            body: JSON.stringify({ tags: selectedTags }),
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (!apiBaseUrl) {
+          throw new Error(
+            "API base URL is not set. Please define NEXT_PUBLIC_API_BASE_URL in your environment.",
+          );
+        }
+        const response = await fetch(`${apiBaseUrl}/api/v1/user_tag_prefs`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
           },
-        );
+          body: JSON.stringify({ tags: selectedTags }),
+        });
         if (!response.ok) {
           throw new Error("Failed to save tag preferences");
         }
