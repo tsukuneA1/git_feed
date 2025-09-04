@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
-      private
       before_action :authenticate_user!
+      private
 
   def current_user
     return @current_user if defined?(@current_user)
