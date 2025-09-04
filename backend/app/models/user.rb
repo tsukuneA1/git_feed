@@ -14,10 +14,12 @@ class User < ApplicationRecord
                       message: "正しいURLを入力してください" }
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    where(provider: auth.provider, uid: auth.uid).first_or_initialize.tap do |user|
       user.username = auth.info.nickname
       user.name = auth.info.name
       user.avatar_url = auth.info.image
+      user.github_token = auth.credentials.token if auth.credentials&.token
+      user.save!
     end
   end
 
