@@ -171,62 +171,66 @@ export function Feed({
   };
 
   return (
-    <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-      <section className="space-y-3">
-        <AudienceTabs value={audience} onChange={setAudience} />
+    <div className="mx-auto max-w-6xl ">
+      <h1 className="text-2xl font-bold text-foreground leading-tight text-balance mb-5">
+        フィード
+      </h1>
+      <div className="h-1.5 w-10 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-full shadow-lg"></div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+        <section className="space-y-3">
+          <AudienceTabs value={audience} onChange={setAudience} />
 
-        <div className="px-1">
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="relative"
-            aria-label="Feed search"
-          >
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <SearchIcon className="h-5 w-5" />
-            </span>
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="検索（タイトル・本文・タグ・URL）"
-              className="h-11 w-full rounded-full border border-border bg-background pl-11 pr-11 text-base focus:outline-none focus:ring-2 focus:ring-ring/50"
-            />
-            {q && (
-              <button
-                type="button"
-                onClick={() => setQ("")}
-                aria-label="Clear search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-2.5 text-xl leading-none text-gray-400 hover:text-gray-600"
-              >
-                ×
-              </button>
+          <div className="px-1">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="relative"
+              aria-label="Feed search"
+            >
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <SearchIcon className="h-5 w-5" />
+              </span>
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="検索（タイトル・本文・タグ・URL）"
+                className="h-11 w-full rounded-full border border-border bg-background pl-11 pr-11 text-base focus:outline-none focus:ring-2 focus:ring-ring/50"
+              />
+              {q && (
+                <button
+                  type="button"
+                  onClick={() => setQ("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-2.5 text-xl leading-none text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              )}
+            </form>
+          </div>
+          <QnaComposer users={allUsers} onPost={handlePostQ} />
+          <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+            {filtered.map((a) => (
+              <FeedRow activity={a} key={a.id} />
+            ))}
+            {filtered.length === 0 && (
+              <div className="p-6 text-center text-sm text-gray-500">
+                条件に一致する投稿がありません
+              </div>
             )}
-          </form>
-        </div>
+          </div>
 
-        <QnaComposer users={allUsers} onPost={handlePostQ} />
+          <div className="flex items-center justify-center">
+            <button
+              type="button"
+              className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50"
+            >
+              Load more
+            </button>
+          </div>
+        </section>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          {filtered.map((a) => (
-            <FeedRow activity={a} key={a.id} />
-          ))}
-          {filtered.length === 0 && (
-            <div className="p-6 text-center text-sm text-gray-500">
-              条件に一致する投稿がありません
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-center">
-          <button
-            type="button"
-            className="mt-2 rounded-full border px-4 py-2 text-sm hover:bg-gray-50"
-          >
-            Load more
-          </button>
-        </div>
-      </section>
-
-      <RightSidebar items={items} />
+        <RightSidebar items={items} />
+      </div>
     </div>
   );
 }
