@@ -12,3 +12,14 @@ export async function getPopularLanguages(limit = 100): Promise<PopularRes> {
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json() as Promise<PopularRes>;
 }
+
+export async function fetchUserTagPrefs(token: string) {
+  const res = await fetch(`${API_BASE}/api/v1/user_tag_prefs`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}

@@ -36,8 +36,14 @@ const AVAILABLE_TAGS = [
   "typescript",
 ];
 
-export function TagSelector() {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+type TagSelectorProps = {
+  initialSelectedTags?: { tag: string; weight: number }[];
+};
+
+export function TagSelector({ initialSelectedTags }: TagSelectorProps) {
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    initialSelectedTags?.map((t) => t.tag) || [],
+  );
   const [isComplete, setIsComplete] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
