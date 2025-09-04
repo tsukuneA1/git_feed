@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   has_many :refresh_tokens, dependent: :destroy
+  has_many :user_tag_prefs, dependent: :destroy
+  has_many :tags, through: :user_tag_prefs
 
   before_validation :normalize_fields
 
