@@ -22,17 +22,13 @@ default: &default
 
 development:
   primary:
-    <<: *default
-    database: backend_development
+    url: <%= ENV["DATABASE_URL"] %>
   cable:
-    <<: *default
-    database: backend_development
+    url: <%= ENV["DATABASE_URL"] %>
   queue:
-    <<: *default
-    database: backend_development
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
-    <<: *default
-    database: backend_development
+    url: <%= ENV["DATABASE_URL"] %>
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
